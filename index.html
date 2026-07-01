@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>蔷薇的呼唤 - 调查入口</title>
+    <style>
+        :root {
+            --bg-deep: #0a0806;
+            --bg-surface: #12100d;
+            --bg-card: #16120e;
+            --gold: #b8945c;
+            --gold-light: #d4b87a;
+            --gold-dim: #7a6038;
+            --gold-pale: #c9b896;
+            --cream: #e8dcc8;
+            --cream-dim: #c4b99a;
+            --text-light: #d5cfc4;
+            --text-muted: #9a9384;
+            --wine: #5c1a22;
+            --wine-deep: #3d0f15;
+            --border-subtle: #2a2520;
+            --border-gold: rgba(184, 148, 92, 0.35);
+            --shadow-glow: 0 0 30px rgba(184, 148, 92, 0.12);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.6);
+            --font-heading: 'Times New Roman', 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', 'KaiTi', serif;
+            --font-body: 'Georgia', 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', 'KaiTi', serif;
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+            --transition-smooth: 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-fast: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --cover-height: 100vh;
+            --cover-height-fallback: 100dvh;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            background-color: var(--bg-deep);
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            line-height: 1.75;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-image:
+                radial-gradient(ellipse at 50% 30%, rgba(120, 90, 50, 0.03) 0%, transparent 70%),
+                radial-gradient(ellipse at 80% 60%, rgba(100, 70, 40, 0.02) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 80%, rgba(90, 60, 35, 0.02) 0%, transparent 50%);
+            overflow-x: hidden;
+        }
+
+        /* ========== 封面区域 ========== */
+        .cover-section {
+            position: relative;
+            width: 100%;
+            height: var(--cover-height);
+            height: var(--cover-height-fallback);
+            min-height: 100vh;
+            overflow: hidden;
+            background-color: #050403;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+        }
+
+        .cover-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            line-height: 0;
+        }
+
+        .cover-image {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            filter: brightness(0.78) saturate(0.88) contrast(1.04);
+            transition: filter 0.8s ease;
+            will-change: transform;
+        }
+
+        /* 暗角与渐变叠加 */
+        .cover-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            background:
+                radial-gradient(ellipse at center, transparent 40%, rgba(5, 4, 3, 0.35) 70%, rgba(5, 4, 3, 0.7) 100%),
+                linear-gradient(to bottom,
+                    rgba(10, 8, 6, 0.15) 0%,
+                    transparent 25%,
+                    transparent 65%,
+                    rgba(10, 8, 6, 0.4) 85%,
+                    rgba(10, 8, 6, 0.75) 95%,
+                    var(--bg-deep) 100%);
+        }
+
+        /* 底部渐变——让提示区域更清晰 */
+        .cover-bottom-gradient {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: clamp(120px, 28%, 200px);
+            background: linear-gradient(to bottom,
+                    transparent 0%,
+                    rgba(10, 8, 6, 0.25) 30%,
+                    rgba(10, 8, 6, 0.6) 60%,
+                    rgba(10, 8, 6, 0.85) 85%,
+                    var(--bg-deep) 100%);
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        /* 上滑提示 */
+        .swipe-hint {
+            position: absolute;
+            bottom: clamp(28px, 6vh, 50px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            pointer-events: auto;
+            transition: opacity 0.6s ease;
+        }
+
+        .swipe-hint.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .swipe-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            animation: arrowFloat 2.4s ease-in-out infinite;
+        }
+
+        .swipe-arrow svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--gold-light);
+            fill: none;
+            stroke-width: 1.6;
+            opacity: 0.85;
+            filter: drop-shadow(0 0 10px rgba(200, 160, 100, 0.5));
+            transition: all var(--transition-fast);
+        }
+
+        .swipe-arrow svg:nth-child(2) {
+            opacity: 0.55;
+            width: 22px;
+            height: 22px;
+            animation-delay: 0.15s;
+        }
+
+        .swipe-arrow svg:nth-child(3) {
+            opacity: 0.3;
+            width: 17px;
+            height: 17px;
+            animation-delay: 0.3s;
+        }
+
+        @keyframes arrowFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            25% {
+                transform: translateY(-8px);
+            }
+            50% {
+                transform: translateY(0);
+            }
+            75% {
+                transform: translateY(4px);
+            }
+        }
+
+        .swipe-text {
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            color: var(--cream-dim);
+            text-shadow: 0 0 18px rgba(200, 160, 100, 0.4);
+            opacity: 0.8;
+            transition: all var(--transition-fast);
+            text-align: center;
+        }
+
+        .swipe-hint:hover .swipe-text {
+            opacity: 1;
+            color: var(--cream);
+            text-shadow: 0 0 25px rgba(210, 170, 110, 0.6);
+        }
+
+        .swipe-hint:hover .swipe-arrow svg {
+            stroke: var(--cream);
+            filter: drop-shadow(0 0 16px rgba(210, 170, 110, 0.7));
+        }
+
+        .swipe-hint:active .swipe-arrow {
+            animation: arrowBounce 0.4s ease-out;
+        }
+
+        @keyframes arrowBounce {
+            0% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-16px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* ========== 内容区域 ========== */
+        .content-section {
+            position: relative;
+            z-index: 10;
+            padding: 40px 20px 50px;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        /* 装饰顶部线 */
+        .content-top-ornament {
+            text-align: center;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .content-top-ornament .ornament-line {
+            display: block;
+            width: 50%;
+            max-width: 240px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold-dim), var(--gold-light), var(--gold-dim), transparent);
+            margin: 0 auto 8px;
+            opacity: 0.7;
+        }
+
+        .content-top-ornament .ornament-symbol {
+            font-size: 1rem;
+            color: var(--gold-dim);
+            letter-spacing: 0;
+            opacity: 0.7;
+        }
+
+        /* 标题 */
+        .main-heading {
+            font-family: var(--font-heading);
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            font-weight: 400;
+            letter-spacing: 0.2em;
+            color: var(--cream);
+            text-align: center;
+            margin-bottom: 8px;
+            text-shadow: 0 0 30px rgba(180, 140, 90, 0.25);
+            position: relative;
+        }
+
+        .main-heading::after {
+            content: '';
+            display: block;
+            width: 50%;
+            max-width: 200px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+            margin: 12px auto 0;
+            opacity: 0.5;
+        }
+
+        .heading-subtitle {
+            text-align: center;
+            font-size: 0.72rem;
+            letter-spacing: 0.25em;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-style: italic;
+            opacity: 0.7;
+            font-family: var(--font-heading);
+        }
+
+        /* 介绍文字卡片 */
+        .intro-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 3px solid var(--gold-dim);
+            border-radius: 2px;
+            padding: 26px 24px 22px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+        }
+
+        .intro-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(184, 148, 92, 0.3), transparent);
+            opacity: 0.6;
+        }
+
+        .intro-text {
+            font-size: 0.92rem;
+            line-height: 1.95;
+            letter-spacing: 0.04em;
+            color: var(--text-light);
+            text-indent: 2em;
+            margin: 0;
+        }
+
+        .intro-text .highlight {
+            color: var(--gold-light);
+            font-weight: 600;
+            letter-spacing: 0.06em;
+        }
+
+        /* 温馨提示卡片 */
+        .tips-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 2px;
+            padding: 24px 22px 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .tips-heading {
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            letter-spacing: 0.15em;
+            color: var(--gold-pale);
+            margin-bottom: 18px;
+            text-align: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .tips-heading::before,
+        .tips-heading::after {
+            content: '';
+            display: inline-block;
+            width: 30px;
+            height: 1px;
+            background: var(--gold-dim);
+            opacity: 0.5;
+        }
+
+        .tips-list {
+            list-style: none;
+            counter-reset: tip-counter;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .tips-list li {
+            counter-increment: tip-counter;
+            position: relative;
+            padding: 13px 14px 13px 46px;
+            border-bottom: 1px solid rgba(42, 37, 32, 0.4);
+            font-size: 0.85rem;
+            letter-spacing: 0.04em;
+            color: var(--text-light);
+            line-height: 1.7;
+            transition: background var(--transition-fast);
+        }
+
+        .tips-list li:last-child {
+            border-bottom: none;
+            padding-bottom: 4px;
+        }
+
+        .tips-list li:first-child {
+            padding-top: 4px;
+        }
+
+        .tips-list li::before {
+            content: counter(tip-counter);
+            position: absolute;
+            left: 12px;
+            top: 13px;
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            color: var(--gold-light);
+            letter-spacing: 0;
+            font-weight: 400;
+            opacity: 0.75;
+            min-width: 22px;
+            text-align: right;
+            line-height: 1.5;
+        }
+
+        .tips-list li:first-child::before {
+            top: 4px;
+        }
+
+        .tips-list li:last-child::before {
+            top: 13px;
+        }
+
+        .tips-list li:hover {
+            background: rgba(184, 148, 92, 0.025);
+        }
+
+        .tips-list .tip-emphasis {
+            color: var(--gold-light);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .tips-list .tip-key {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
+            color: var(--cream-dim);
+            background: rgba(184, 148, 92, 0.08);
+            padding: 1px 6px;
+            border-radius: 1px;
+            border: 1px solid rgba(184, 148, 92, 0.2);
+            white-space: nowrap;
+        }
+
+        /* 进入按钮区域 */
+        .enter-button-wrapper {
+            text-align: center;
+            margin-top: 8px;
+            padding: 8px 0;
+        }
+
+        .enter-button {
+            display: inline-block;
+            background: var(--bg-surface);
+            border: 1.5px solid var(--gold-dim);
+            color: var(--gold-light);
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            letter-spacing: 0.18em;
+            padding: 14px 36px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all var(--transition-fast);
+            user-select: none;
+            position: relative;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            text-decoration: none;
+            box-shadow: 0 0 0 rgba(184, 148, 92, 0);
+        }
+
+        .enter-button:hover {
+            border-color: var(--gold-light);
+            background: #1a1610;
+            box-shadow: 0 0 30px rgba(184, 148, 92, 0.25), 0 0 55px rgba(184, 148, 92, 0.08);
+            color: #e8d4a8;
+            letter-spacing: 0.22em;
+            transform: translateY(-2px);
+        }
+
+        .enter-button:active {
+            transform: scale(0.96);
+            transition: transform 0.1s ease;
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(184, 148, 92, 0.35);
+        }
+
+        .enter-button .arrow-symbol {
+            display: inline-block;
+            transition: transform var(--transition-fast);
+            margin-left: 2px;
+        }
+
+        .enter-button:hover .arrow-symbol {
+            transform: translateX(5px);
+        }
+
+        /* 底部微装饰 */
+        .content-bottom-ornament {
+            text-align: center;
+            margin-top: 22px;
+            opacity: 0.4;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            font-style: italic;
+        }
+
+        /* ========== 响应式调整 ========== */
+        @media (max-width: 768px) {
+            .cover-section {
+                height: 100vh;
+                height: 100dvh;
+                min-height: -webkit-fill-available;
+            }
+            .cover-image {
+                object-position: center 40%;
+            }
+            .swipe-text {
+                font-size: 0.75rem;
+                letter-spacing: 0.16em;
+            }
+            .swipe-arrow svg {
+                width: 24px;
+                height: 24px;
+            }
+            .swipe-arrow svg:nth-child(2) {
+                width: 19px;
+                height: 19px;
+            }
+            .swipe-arrow svg:nth-child(3) {
+                width: 15px;
+                height: 15px;
+            }
+            .content-section {
+                padding: 28px 14px 40px;
+            }
+            .intro-card {
+                padding: 20px 14px 18px;
+            }
+            .intro-text {
+                font-size: 0.85rem;
+                text-indent: 1.6em;
+                line-height: 1.8;
+            }
+            .tips-card {
+                padding: 18px 12px 16px;
+            }
+            .tips-list li {
+                padding: 11px 10px 11px 38px;
+                font-size: 0.8rem;
+                line-height: 1.6;
+            }
+            .tips-list li::before {
+                left: 8px;
+                font-size: 0.7rem;
+                min-width: 20px;
+            }
+            .main-heading {
+                font-size: 1.5rem;
+                letter-spacing: 0.14em;
+            }
+            .enter-button {
+                font-size: 0.9rem;
+                padding: 12px 26px;
+                letter-spacing: 0.14em;
+            }
+            .heading-subtitle {
+                font-size: 0.65rem;
+                letter-spacing: 0.18em;
+                margin-bottom: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cover-section {
+                height: 100vh;
+                height: 100dvh;
+            }
+            .cover-image {
+                object-position: center 35%;
+            }
+            .swipe-hint {
+                bottom: 24px;
+                gap: 8px;
+            }
+            .swipe-text {
+                font-size: 0.7rem;
+                letter-spacing: 0.12em;
+            }
+            .swipe-arrow svg {
+                width: 22px;
+                height: 22px;
+            }
+            .swipe-arrow svg:nth-child(2) {
+                width: 17px;
+                height: 17px;
+            }
+            .swipe-arrow svg:nth-child(3) {
+                width: 13px;
+                height: 13px;
+            }
+            .content-section {
+                padding: 22px 10px 36px;
+            }
+            .intro-card {
+                padding: 16px 10px 14px;
+            }
+            .intro-text {
+                font-size: 0.8rem;
+                text-indent: 1.4em;
+                line-height: 1.7;
+            }
+            .tips-card {
+                padding: 14px 8px 12px;
+            }
+            .tips-list li {
+                padding: 10px 8px 10px 32px;
+                font-size: 0.75rem;
+                line-height: 1.5;
+                letter-spacing: 0.03em;
+            }
+            .tips-list li::before {
+                left: 6px;
+                font-size: 0.65rem;
+                min-width: 18px;
+            }
+            .main-heading {
+                font-size: 1.35rem;
+                letter-spacing: 0.1em;
+            }
+            .enter-button {
+                font-size: 0.82rem;
+                padding: 10px 20px;
+                letter-spacing: 0.1em;
+            }
+            .heading-subtitle {
+                font-size: 0.6rem;
+                letter-spacing: 0.14em;
+                margin-bottom: 18px;
+            }
+            .tips-heading {
+                font-size: 0.85rem;
+                letter-spacing: 0.1em;
+                gap: 8px;
+            }
+            .tips-heading::before,
+            .tips-heading::after {
+                width: 18px;
+            }
+        }
+
+        /* 针对iOS Safari的安全区域 */
+        @supports(padding-bottom: env(safe-area-inset-bottom)) {
+            .swipe-hint {
+                bottom: calc(28px + env(safe-area-inset-bottom));
+            }
+            .content-section {
+                padding-bottom: calc(50px + env(safe-area-inset-bottom));
+            }
+            @media (max-width: 480px) {
+                .swipe-hint {
+                    bottom: calc(20px + env(safe-area-inset-bottom));
+                }
+                .content-section {
+                    padding-bottom: calc(36px + env(safe-area-inset-bottom));
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 封面区域 ==================== -->
+    <section class="cover-section" id="coverSection" aria-label="封面">
+        <div class="cover-image-wrapper">
+            <!-- 请将pic0.jpg放置在与本HTML文件相同的目录下 -->
+            <img
+            src="pic0.jpg"
+            alt="封面图"
+            class="cover-image"
+            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(180deg, #1a1208 0%, #0d0a05 55%, #0a0806 100%)'; this.parentElement.style.minHeight='100vh';"
+            loading="eager"
+            >
+            <!-- 暗角叠加层 -->
+            <div class="cover-overlay" aria-hidden="true"></div>
+            <!-- 底部渐变 -->
+            <div class="cover-bottom-gradient" aria-hidden="true"></div>
+            <!-- 上滑提示 -->
+            <div class="swipe-hint" id="swipeHint" aria-label="上滑进入" role="button" tabindex="0">
+                <div class="swipe-arrow" aria-hidden="true">
+                    <!-- 三个箭头营造层次感 -->
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <polyline points="6 15 12 9 18 15"/>
+                    </svg>
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <polyline points="6 15 12 9 18 15"/>
+                    </svg>
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <polyline points="6 15 12 9 18 15"/>
+                    </svg>
+                </div>
+                <span class="swipe-text">↑ 上滑进入</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 内容区域 ==================== -->
+    <section class="content-section" id="contentSection" aria-label="调查内容">
+        <!-- 顶部装饰 -->
+        <div class="content-top-ornament" aria-hidden="true">
+            <span class="ornament-line"></span>
+            <span class="ornament-symbol">✠</span>
+        </div>
+
+        <!-- 标题 -->
+        <h1 class="main-heading">蔷薇的呼唤</h1>
+        <p class="heading-subtitle">— CASE FILE · 诡异调查 —</p>
+
+        <!-- 介绍文字 -->
+        <div class="intro-card">
+            <p class="intro-text">
+                近日一起<span class="highlight">多人诡异失踪</span>的案件惊动了调查局，而他们失踪前唯一的共同点就是参与了一个<span class="highlight">香水品牌</span>举行的解谜活动。身为<span class="highlight">诡异调查员</span>的你奉命调查此案。
+            </p>
+        </div>
+
+        <!-- 温馨提示 -->
+        <div class="tips-card">
+            <h2 class="tips-heading">温馨提示</h2>
+            <ol class="tips-list">
+                <li>本作难度较低，大部分<span class="tip-emphasis">关键词</span>都有<span class="tip-emphasis">加粗</span>标注。</li>
+                <li>请先从这场<span class="tip-emphasis">解密游戏本身</span>作为调查的切入点吧！</li>
+                <li>进入页面后，留意<span class="tip-key">右下角圆形按键</span>，点击可以查看香水品牌解谜游戏的宣传单，与网站结合完成解谜。</li>
+                <li>本作没有恐怖的突脸等元素，仅通过文字叙述渲染一点恐怖氛围，属于<span class="tip-emphasis">微微微恐</span>，请放心游玩。</li>
+            </ol>
+        </div>
+
+        <!-- 进入按钮 -->
+        <div class="enter-button-wrapper">
+            <a href="page1.html" class="enter-button" id="enterButton">
+                点击进入 <span class="arrow-symbol">→</span>
+            </a>
+        </div>
+
+        <!-- 底部微装饰 -->
+        <div class="content-bottom-ornament" aria-hidden="true">
+            ✠ 调查局档案 · 机密 ✠
+        </div>
+    </section>
+
+    <!-- ==================== JavaScript：交互逻辑 ==================== -->
+    <script>
+        (function() {
+            const swipeHint = document.getElementById('swipeHint');
+            const coverSection = document.getElementById('coverSection');
+            const contentSection = document.getElementById('contentSection');
+            const enterButton = document.getElementById('enterButton');
+
+            let hintHidden = false;
+            let scrollTimeout = null;
+
+            /**
+             * 隐藏上滑提示
+             */
+            function hideSwipeHint() {
+                if (!hintHidden && swipeHint) {
+                    swipeHint.classList.add('hidden');
+                    hintHidden = true;
+                }
+            }
+
+            /**
+             * 显示上滑提示（用户回到顶部时）
+             */
+            function showSwipeHint() {
+                if (hintHidden && swipeHint) {
+                    swipeHint.classList.remove('hidden');
+                    hintHidden = false;
+                }
+            }
+
+            /**
+             * 处理滚动事件
+             */
+            function handleScroll() {
+                // 清除之前的计时器
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                }
+
+                // 使用requestAnimationFrame优化性能
+                requestAnimationFrame(() => {
+                    const scrollY = window.scrollY || window.pageYOffset;
+                    const viewportHeight = window.innerHeight;
+
+                    // 当用户滚动超过视口高度的15%时隐藏提示
+                    if (scrollY > viewportHeight * 0.15) {
+                        hideSwipeHint();
+                    } else if (scrollY < viewportHeight * 0.05) {
+                        // 回到接近顶部时显示提示
+                        showSwipeHint();
+                    }
+                });
+
+                // 设置防抖计时器，在滚动停止后再次检查
+                scrollTimeout = setTimeout(() => {
+                    const scrollY = window.scrollY || window.pageYOffset;
+                    const viewportHeight = window.innerHeight;
+                    if (scrollY < viewportHeight * 0.05 && hintHidden) {
+                        showSwipeHint();
+                    }
+                }, 300);
+            }
+
+            /**
+             * 点击提示区域——平滑滚动到内容区
+             */
+            function handleHintClick() {
+                if (contentSection) {
+                    const targetY = contentSection.getBoundingClientRect().top + window.scrollY - 20;
+                    window.scrollTo({
+                        top: targetY,
+                        behavior: 'smooth'
+                    });
+                    // 立即隐藏提示
+                    hideSwipeHint();
+                }
+            }
+
+            /**
+             * 键盘无障碍——Enter键触发
+             */
+            function handleHintKeydown(event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleHintClick();
+                }
+            }
+
+            /**
+             * 触摸事件——在封面区域检测上滑手势
+             */
+            let touchStartY = 0;
+            let touchEndY = 0;
+            const SWIPE_THRESHOLD = 50; // 上滑阈值（像素）
+
+            function handleTouchStart(event) {
+                touchStartY = event.touches[0].clientY;
+                touchEndY = touchStartY;
+            }
+
+            function handleTouchMove(event) {
+                touchEndY = event.touches[0].clientY;
+            }
+
+            function handleTouchEnd() {
+                const deltaY = touchStartY - touchEndY; // 正值表示向上滑动
+                const scrollY = window.scrollY || window.pageYOffset;
+
+                // 仅在页面顶部且上滑距离足够时触发
+                if (scrollY < 60 && deltaY > SWIPE_THRESHOLD && contentSection) {
+                    const targetY = contentSection.getBoundingClientRect().top + window.scrollY - 20;
+                    window.scrollTo({
+                        top: targetY,
+                        behavior: 'smooth'
+                    });
+                    hideSwipeHint();
+                }
+            }
+
+            // 绑定事件
+            if (swipeHint) {
+                swipeHint.addEventListener('click', handleHintClick);
+                swipeHint.addEventListener('keydown', handleHintKeydown);
+            }
+
+            // 封面区域触摸手势
+            if (coverSection) {
+                coverSection.addEventListener('touchstart', handleTouchStart, { passive: true });
+                coverSection.addEventListener('touchmove', handleTouchMove, { passive: true });
+                coverSection.addEventListener('touchend', handleTouchEnd);
+            }
+
+            // 全局滚动监听
+            window.addEventListener('scroll', handleScroll, { passive: true });
+
+            // 初始检查（防止页面加载时已有滚动位置）
+            handleScroll();
+
+            // 进入按钮点击追踪（可选，用于调试）
+            if (enterButton) {
+                enterButton.addEventListener('click', function(e) {
+                    // 允许正常跳转，此处可添加埋点或过渡动画
+                    console.log('🔍 调查员正在进入案件档案...');
+                });
+            }
+
+            // 页面加载完成后的初始化
+            console.log('🌹 蔷薇的呼唤 — 调查入口已就绪');
+            console.log('   📱 上滑封面或点击提示进入调查');
+            console.log('   🔍 点击「点击进入→」跳转至案件档案');
+            console.log('   ⚠️ 内容均为虚构，仅供解谜体验');
+        })();
+    </script>
+</body>
+</html>

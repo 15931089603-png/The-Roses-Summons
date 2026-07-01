@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蔷薇十字会 - 机密档案</title>
+    <style>
+        :root {
+            --bg-deep: #0a0806;
+            --bg-surface: #12100d;
+            --bg-archive: #1a1610;
+            --gold: #b8945c;
+            --gold-light: #d4b87a;
+            --gold-dim: #7a6038;
+            --cream: #e8dcc8;
+            --cream-dim: #c4b99a;
+            --text-light: #d5cfc4;
+            --text-muted: #9a9384;
+            --wine: #5c1a22;
+            --wine-deep: #3d0f15;
+            --border-subtle: #2a2520;
+            --border-gold: rgba(184, 148, 92, 0.4);
+            --shadow-glow: 0 0 30px rgba(184, 148, 92, 0.15);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.6);
+            --font-heading: 'Times New Roman', 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', 'KaiTi', serif;
+            --font-body: 'Georgia', 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', 'KaiTi', serif;
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+            --transition-smooth: 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-fast: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            line-height: 1.75;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(120, 90, 50, 0.04) 0%, transparent 70%),
+                radial-gradient(ellipse at 80% 30%, rgba(100, 70, 40, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 60%, rgba(90, 60, 35, 0.03) 0%, transparent 55%);
+        }
+
+        /* ========== 顶部Banner区域 ========== */
+        .banner-section {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            background-color: #050403;
+            min-height: 300px;
+            max-height: 65vh;
+            display: flex;
+            align-items: stretch;
+        }
+
+        .banner-image-wrapper {
+            position: relative;
+            width: 100%;
+            line-height: 0;
+        }
+
+        .banner-image {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 65vh;
+            object-fit: cover;
+            object-position: center top;
+            filter: brightness(0.85) saturate(0.9);
+            transition: filter 0.8s ease;
+        }
+
+        .banner-gradient-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: clamp(100px, 35%, 220px);
+            background: linear-gradient(to bottom,
+                    transparent 0%,
+                    rgba(10, 8, 6, 0.05) 8%,
+                    rgba(10, 8, 6, 0.2) 20%,
+                    rgba(10, 8, 6, 0.45) 38%,
+                    rgba(10, 8, 6, 0.7) 58%,
+                    rgba(10, 8, 6, 0.9) 78%,
+                    var(--bg-deep) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .banner-vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at center, transparent 55%, rgba(5, 4, 3, 0.5) 85%, rgba(5, 4, 3, 0.8) 100%);
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .banner-title-overlay {
+            position: absolute;
+            top: 28%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            text-align: center;
+            pointer-events: none;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .main-title {
+            font-family: var(--font-heading);
+            font-size: clamp(2.2rem, 5vw, 4.2rem);
+            font-weight: 400;
+            letter-spacing: 0.25em;
+            color: #f0e6d3;
+            text-shadow:
+                0 0 40px rgba(200, 160, 100, 0.5),
+                0 0 80px rgba(180, 130, 70, 0.3),
+                0 0 120px rgba(160, 110, 50, 0.2),
+                0 2px 4px rgba(0, 0, 0, 0.7);
+            line-height: 1.3;
+            user-select: none;
+            animation: titlePulse 6s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%,
+            100% {
+                text-shadow: 0 0 40px rgba(200, 160, 100, 0.5), 0 0 80px rgba(180, 130, 70, 0.3), 0 0 120px rgba(160, 110, 50, 0.2), 0 2px 4px rgba(0, 0, 0, 0.7);
+            }
+            50% {
+                text-shadow: 0 0 55px rgba(210, 170, 110, 0.65), 0 0 100px rgba(190, 140, 80, 0.4), 0 0 150px rgba(170, 120, 60, 0.3), 0 2px 4px rgba(0, 0, 0, 0.7);
+            }
+        }
+
+        .title-ornament {
+            display: block;
+            font-size: clamp(1rem, 1.8vw, 1.4rem);
+            letter-spacing: 0.4em;
+            color: var(--gold-light);
+            margin-bottom: 0.4em;
+            text-shadow: 0 0 20px rgba(200, 160, 100, 0.5);
+            opacity: 0.85;
+        }
+
+        .title-decorative-line {
+            display: block;
+            width: 60%;
+            max-width: 300px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold-dim), var(--gold-light), var(--gold-dim), transparent);
+            margin: 0.5em auto;
+            opacity: 0.7;
+        }
+
+        /* ========== 主内容区域 ========== */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            padding: 20px 24px 40px;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        /* ========== 搜索区域 ========== */
+        .search-section {
+            margin-top: -30px;
+            position: relative;
+            z-index: 20;
+            padding: 0 16px;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input-wrapper {
+            display: flex;
+            align-items: center;
+            background: var(--bg-surface);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 2px;
+            padding: 6px 8px;
+            transition: all var(--transition-smooth);
+            box-shadow: var(--shadow-card);
+            position: relative;
+        }
+
+        .search-input-wrapper:focus-within {
+            border-color: var(--gold-dim);
+            box-shadow: var(--shadow-glow), var(--shadow-card);
+            background: #161310;
+        }
+
+        .search-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold-dim);
+            font-size: 1.3rem;
+            user-select: none;
+        }
+
+        .search-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--cream);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            padding: 10px 8px;
+            letter-spacing: 0.06em;
+            min-width: 0;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        .search-hint {
+            flex-shrink: 0;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            padding: 0 10px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            white-space: nowrap;
+            font-style: italic;
+        }
+
+        .search-input-wrapper:focus-within .search-hint {
+            opacity: 0.7;
+        }
+
+        .search-divider-vertical {
+            width: 1px;
+            height: 22px;
+            background: var(--border-subtle);
+            flex-shrink: 0;
+            margin: 0 2px;
+        }
+
+        .search-status {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+            letter-spacing: 0.06em;
+            min-height: 20px;
+            transition: color 0.4s ease;
+            font-style: italic;
+        }
+
+        .search-status.found {
+            color: var(--gold-light);
+            opacity: 0.9;
+        }
+
+        /* ========== 档案来源标识 ========== */
+        .archive-source-note {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            margin-top: 6px;
+            margin-bottom: 0;
+            font-style: italic;
+            user-select: none;
+            opacity: 0.75;
+            transition: opacity 0.4s ease;
+            font-family: var(--font-body);
+        }
+
+        .archive-source-note strong {
+            font-weight: 700;
+            color: var(--cream-dim);
+            letter-spacing: 0.1em;
+            font-style: normal;
+        }
+
+        .archive-source-note .source-ornament {
+            display: inline-block;
+            color: var(--gold-dim);
+            margin: 0 6px;
+            font-size: 0.65rem;
+            opacity: 0.7;
+            font-style: normal;
+        }
+
+        /* ========== 档案区域 ========== */
+        .archives-container {
+            margin-top: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .archive-dossier {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transform: translateY(-12px);
+            transition: all var(--transition-smooth);
+            pointer-events: none;
+            border-left: 3px solid transparent;
+            background: var(--bg-archive);
+            border-radius: 2px;
+            box-shadow: none;
+        }
+
+        .archive-dossier.visible {
+            max-height: 8000px;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            border-left-color: var(--gold-dim);
+            box-shadow: var(--shadow-card), inset 0 1px 0 rgba(184, 148, 92, 0.08);
+        }
+
+        .archive-inner {
+            padding: 28px 30px 32px;
+        }
+
+        .archive-classification-stamp {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #8b6f4e;
+            border: 1px solid #8b6f4e;
+            padding: 5px 16px;
+            margin-bottom: 20px;
+            border-radius: 1px;
+            opacity: 0.75;
+            user-select: none;
+        }
+
+        .archive-title {
+            font-family: var(--font-heading);
+            font-size: clamp(1.5rem, 2.5vw, 2rem);
+            font-weight: 400;
+            letter-spacing: 0.12em;
+            color: var(--cream);
+            margin-bottom: 8px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .archive-title::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, var(--gold-dim), transparent);
+            margin-top: 6px;
+            opacity: 0.6;
+        }
+
+        .archive-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            margin-bottom: 22px;
+            font-style: italic;
+        }
+
+        .archive-body {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.9;
+            letter-spacing: 0.03em;
+        }
+
+        .archive-body p {
+            margin-bottom: 1.2em;
+            text-indent: 2em;
+        }
+
+        .archive-body p.no-indent {
+            text-indent: 0;
+        }
+
+        .archive-section-marker {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            color: var(--gold-light);
+            letter-spacing: 0.15em;
+            margin: 1.8em 0 0.6em;
+            padding-top: 0.6em;
+            border-top: 1px dotted rgba(184, 148, 92, 0.25);
+            font-weight: 400;
+        }
+
+        .archive-section-marker:first-of-type {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .archive-highlight {
+            color: var(--gold-light);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .archive-separator {
+            border: none;
+            border-top: 1px dotted rgba(184, 148, 92, 0.2);
+            margin: 20px 0;
+        }
+
+        .dossiers-divider {
+            border: none;
+            border-top: 2px solid rgba(184, 148, 92, 0.2);
+            margin: 8px 0;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .dossiers-divider.visible {
+            opacity: 1;
+        }
+
+        /* ========== 结束按钮与结束语区域 ========== */
+        .ending-button-wrapper {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 16px;
+            border-top: 1px dotted rgba(184, 148, 92, 0.2);
+            transition: all var(--transition-fast);
+        }
+
+        .ending-button-wrapper.hidden {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .ending-button {
+            display: inline-block;
+            background: var(--bg-surface);
+            border: 1.5px solid var(--gold-dim);
+            color: var(--gold-light);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            padding: 12px 28px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all var(--transition-fast);
+            user-select: none;
+            position: relative;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ending-button:hover {
+            border-color: var(--gold-light);
+            background: #1a1610;
+            box-shadow: 0 0 25px rgba(184, 148, 92, 0.25), 0 0 50px rgba(184, 148, 92, 0.08);
+            color: #e8d4a8;
+            letter-spacing: 0.18em;
+            transform: translateY(-1px);
+        }
+
+        .ending-button:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease;
+            border-color: var(--gold);
+            box-shadow: 0 0 18px rgba(184, 148, 92, 0.3);
+        }
+
+        .ending-button .arrow-symbol {
+            display: inline-block;
+            transition: transform var(--transition-fast);
+            margin-left: 4px;
+        }
+
+        .ending-button:hover .arrow-symbol {
+            transform: translateX(4px);
+        }
+
+        /* 结束语展开区域 */
+        .ending-reveal {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+            margin-top: 0;
+            pointer-events: none;
+        }
+
+        .ending-reveal.visible {
+            max-height: 600px;
+            opacity: 1;
+            margin-top: 22px;
+            pointer-events: auto;
+        }
+
+        .ending-content-inner {
+            background: #0f0c08;
+            border: 1px solid rgba(184, 148, 92, 0.3);
+            border-left: 3px solid var(--gold-dim);
+            padding: 24px 22px;
+            border-radius: 2px;
+            position: relative;
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .ending-content-inner::before {
+            content: '✠';
+            display: block;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--gold-dim);
+            opacity: 0.6;
+            margin-bottom: 12px;
+            letter-spacing: 0;
+        }
+
+        .ending-content-inner p {
+            color: #d5cfc4;
+            font-size: 0.9rem;
+            line-height: 1.9;
+            text-indent: 2em;
+            letter-spacing: 0.04em;
+            margin: 0;
+            font-style: italic;
+            text-align: justify;
+        }
+
+        .ending-content-inner .ending-signoff {
+            display: block;
+            text-align: right;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            font-style: normal;
+        }
+
+        /* ========== 六大核心会规 ========== */
+        .rules-section {
+            margin-top: 36px;
+            padding: 28px 28px 24px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 2px;
+            position: relative;
+            box-shadow: var(--shadow-card);
+        }
+
+        .rules-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 24px;
+            right: 24px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+            opacity: 0.5;
+        }
+
+        .rules-heading {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 400;
+            letter-spacing: 0.18em;
+            color: var(--cream);
+            text-align: center;
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .rules-heading::after {
+            content: '✠';
+            display: block;
+            font-size: 0.9rem;
+            color: var(--gold-dim);
+            margin-top: 6px;
+            letter-spacing: 0;
+            opacity: 0.7;
+        }
+
+        .rules-list {
+            list-style: none;
+            counter-reset: rule-counter;
+        }
+
+        .rules-list li {
+            counter-increment: rule-counter;
+            position: relative;
+            padding: 14px 0 14px 48px;
+            border-bottom: 1px solid rgba(42, 37, 32, 0.5);
+            font-size: 0.9rem;
+            letter-spacing: 0.04em;
+            color: var(--text-light);
+            line-height: 1.7;
+            transition: background 0.3s ease;
+        }
+
+        .rules-list li:last-child {
+            border-bottom: none;
+        }
+
+        .rules-list li::before {
+            content: counter(rule-counter) '.';
+            position: absolute;
+            left: 12px;
+            top: 14px;
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            color: var(--gold-light);
+            letter-spacing: 0;
+            font-weight: 400;
+            opacity: 0.8;
+            min-width: 24px;
+            text-align: right;
+        }
+
+        .rules-list li:hover {
+            background: rgba(184, 148, 92, 0.03);
+        }
+
+        .rules-list .rc-mark {
+            color: var(--gold-light);
+            font-weight: 400;
+            letter-spacing: 0.08em;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        /* ========== 底部声明 ========== */
+        .footer-disclaimer {
+            margin-top: 36px;
+            background: var(--wine);
+            background: linear-gradient(180deg, #5c1a22 0%, #4a141b 100%);
+            padding: 22px 20px;
+            text-align: center;
+            color: #f0e0d8;
+            font-size: 0.8rem;
+            letter-spacing: 0.06em;
+            line-height: 1.8;
+            border-top: 2px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+
+        .footer-disclaimer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .footer-disclaimer .copyright-line {
+            font-size: 0.75rem;
+            opacity: 0.85;
+            letter-spacing: 0.04em;
+        }
+
+        .footer-disclaimer .maker-line {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+        }
+
+        /* ========== 响应式调整 ========== */
+        @media (max-width: 768px) {
+            .banner-section {
+                min-height: 200px;
+                max-height: 45vh;
+            }
+            .banner-image {
+                max-height: 45vh;
+            }
+            .banner-title-overlay {
+                top: 30%;
+            }
+            .main-title {
+                letter-spacing: 0.18em;
+            }
+            .archive-inner {
+                padding: 20px 16px 24px;
+            }
+            .archive-body p {
+                text-indent: 1.5em;
+            }
+            .rules-section {
+                padding: 20px 14px 18px;
+            }
+            .rules-list li {
+                padding: 12px 0 12px 38px;
+                font-size: 0.85rem;
+            }
+            .rules-list li::before {
+                left: 8px;
+                font-size: 0.85rem;
+            }
+            .search-input {
+                font-size: 0.9rem;
+                padding: 8px 4px;
+            }
+            .search-hint {
+                display: none;
+            }
+            .search-divider-vertical {
+                display: none;
+            }
+            .archive-source-note {
+                font-size: 0.7rem;
+                letter-spacing: 0.05em;
+            }
+            .ending-button {
+                font-size: 0.8rem;
+                padding: 10px 20px;
+                letter-spacing: 0.1em;
+            }
+            .ending-content-inner {
+                padding: 18px 14px;
+            }
+            .ending-content-inner p {
+                font-size: 0.82rem;
+                text-indent: 1.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .banner-section {
+                min-height: 160px;
+                max-height: 35vh;
+            }
+            .banner-image {
+                max-height: 35vh;
+            }
+            .main-title {
+                font-size: 1.6rem;
+                letter-spacing: 0.12em;
+            }
+            .title-ornament {
+                font-size: 0.75rem;
+                letter-spacing: 0.25em;
+            }
+            .archive-inner {
+                padding: 16px 12px 20px;
+            }
+            .archive-body {
+                font-size: 0.85rem;
+                line-height: 1.7;
+            }
+            .archive-body p {
+                text-indent: 1.2em;
+            }
+            .archive-classification-stamp {
+                font-size: 0.6rem;
+                padding: 4px 10px;
+                letter-spacing: 0.2em;
+            }
+            .archive-source-note {
+                font-size: 0.65rem;
+                letter-spacing: 0.04em;
+            }
+            .ending-button {
+                font-size: 0.75rem;
+                padding: 8px 16px;
+                letter-spacing: 0.08em;
+            }
+            .ending-content-inner p {
+                font-size: 0.78rem;
+                line-height: 1.7;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 顶部Banner区域 ==================== -->
+    <section class="banner-section" aria-label="标题横幅">
+        <div class="banner-image-wrapper">
+            <!-- 请将pic15.jpg放置在与本HTML文件相同的目录下 -->
+            <img
+            src="pic15.jpg"
+            alt="蔷薇十字会主题图片"
+            class="banner-image"
+            onerror="this.style.display='none'; this.parentElement.style.minHeight='320px'; this.parentElement.style.background='linear-gradient(180deg, #1a1208 0%, #0d0a05 60%, #0a0806 100%)';"
+            loading="eager"
+            >
+            <div class="banner-gradient-overlay" aria-hidden="true"></div>
+            <div class="banner-vignette" aria-hidden="true"></div>
+            <div class="banner-title-overlay">
+                <span class="title-ornament">✠</span>
+                <h1 class="main-title">蔷薇十字会</h1>
+                <span class="title-decorative-line" aria-hidden="true"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 搜索区域 ==================== -->
+    <div class="search-section">
+        <div class="search-container">
+            <div class="search-input-wrapper" id="searchWrapper">
+                <span class="search-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="10.5" cy="10.5" r="7"/>
+                        <line x1="15.5" y1="15.5" x2="21" y2="21"/>
+                    </svg>
+                </span>
+                <input
+                type="text"
+                class="search-input"
+                id="searchInput"
+                placeholder="搜索档案中的关键词..."
+                autocomplete="off"
+                aria-label="搜索档案关键词"
+                >
+                <span class="search-divider-vertical" aria-hidden="true"></span>
+                <span class="search-hint" aria-hidden="true">输入关键词检索</span>
+            </div>
+            <p class="search-status" id="searchStatus"></p>
+            <!-- 档案来源标识 -->
+            <p class="archive-source-note">
+                <span class="source-ornament">—</span> 档案 —— 由<strong>奥斯达路家族</strong>整理 <span class="source-ornament">—</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ==================== 主内容区域 ==================== -->
+    <div class="main-content">
+
+        <!-- 档案容器 -->
+        <div class="archives-container" id="archivesContainer">
+
+            <!-- ========== 档案一：奥斯达路家族 ========== -->
+            <article class="archive-dossier" id="dossierOstarlow" aria-label="奥斯达路家族档案">
+                <div class="archive-inner">
+                    <span class="archive-classification-stamp">● 机密档案 · CLASSIFIED</span>
+                    <h2 class="archive-title">奥斯达路家族</h2>
+                    <p class="archive-subtitle">Ostarlow Family Dossier — 档案编号 RC-017</p>
+                    <div class="archive-body">
+                        <p>奥斯达路家族世代为<span class="archive-highlight">蔷薇十字会</span>收集并守护珍贵的手稿、档案。这段历史要追溯到17世纪初期，那个时候奥斯达路家族居住在一个倚靠山林的小镇中。</p>
+                        <p>某个清晨，艾达（奥斯达路家族的某个祖先）看到一群不认识的人从山林中搬出一口木箱，木箱八条边都用金属包边，雕刻着繁复的花纹，看出来十分华贵。他四下打听得知，居住在小镇周边靠近山林的居民，经常在晚上听到山林里传出奇怪的声音，对于声音的看法大家众说纷纭，有人认为是很多人在大声嘶吼，有人认为是野兽的嚎叫。居民们不堪其扰，组成小队前往山中查看也找不到源头。只好向当地的教会求助。教会派人多次调查，最终在山林深处发现了一个石屋，正是发出声音的源头。那口木箱应该就是从石屋里搬出来的。再详细的内幕就没有人知道了，教会严格封锁了山林，所有调查都是秘密进行的，没有走漏一点风声。</p>
+                        <p>这反而引起了艾达的兴趣，于是这天傍晚他趁教会派来的看守交班时偷偷溜进了山林。树林里郁郁葱葱，艾达沿着教会的人踩过的路往深处走去。渐行渐深，他发现树林里非常安静，其实这并不正常，日落而息，这会儿正是百兽归巢的时间不可能一点动静也没有，但是艾达还沉浸在探险的激动中并没有察觉到这点。树林很大，艾达马不停蹄地走了四五个小时，才借着月光看到树林中间的一片空地上，立着一间石屋。</p>
+                        <p>石屋门虚掩着，显然教会的人没有想到有人会躲避看守跑到这里。艾达推开门，首先感受到的是屋子里弥漫着一种奇怪的味道，类似海水的咸腥混杂着潮湿腐朽的气味，并不好闻。屋子里的东西已经被教会搬得差不多了，只剩一张破旧的桌子和散落在桌上地下的稿纸，艾达从稿纸里挑了些写满字或画着奇怪符号的带走，四处转转也再没找到什么值得细看的发现，便趁着夜色抄了一条近路回了家。</p>
+                        <p>可一个月后的某个下午，一位自称<span class="archive-highlight">约翰·瓦伦丁·安德烈埃</span>的牧师找上了门。</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 档案之间的分隔线 -->
+            <hr class="dossiers-divider" id="dossiersDivider" aria-hidden="true">
+
+            <!-- ========== 档案二：约翰·瓦伦丁·安德烈埃 ========== -->
+            <article class="archive-dossier" id="dossierAndreae" aria-label="约翰·瓦伦丁·安德烈埃档案">
+                <div class="archive-inner">
+                    <span class="archive-classification-stamp">● 机密档案 · CLASSIFIED</span>
+                    <h2 class="archive-title">约翰·瓦伦丁·安德烈埃</h2>
+                    <p class="archive-subtitle">Johann Valentin Andreae — 档案编号 RC-042</p>
+                    <div class="archive-body">
+                        <p class="no-indent">我们收集了<span class="archive-highlight">约翰·瓦伦丁·安德烈埃</span>的大量手稿，由于内容庞杂且零散，我们将手稿中重要的信息整理，总结成了如下的档案，希望对你有帮助。</p>
+
+                        <h3 class="archive-section-marker">01</h3>
+                        <p>约翰·瓦伦丁·安德烈埃（以下简称<span class="archive-highlight">安德烈埃</span>）17世纪初期曾在一座小镇附近的教堂担任牧师一职。一天午夜，安德烈埃听到卧室窗外传来了一种连续的嗡嗡声，类似昆虫的鸣叫或者气球漏气的声音放大数十倍后的声响。嗡鸣声持续不断，扰得安德烈埃无法入睡，于是他披衣出门，准备去一探声音的来源。这里首先注明，安德烈埃的家就坐落在紧邻教堂的空地上，而卧室的窗户正对着教堂的一侧。</p>
+                        <p>安德烈埃举着烛台绕过祭台，向侧面的圣器室走去，声音明显是从那间屋子里传出来的。圣器室内并不拥挤，由于安德烈埃所属的路德宗教派简化了圣物的收藏，屋子里只摆放了读经台、简易祭布等必要的物品。安德烈埃循声向房间深处走去，最终停在了一口镶边木箱前。箱子里装着前两天教堂的司事和杂役从山林中搜集出的物品，安德烈埃伸出的手悬停在箱子上方，持续的嗡鸣声让他的心中产生些许不详的感觉，但他咬咬牙还是打开了箱子。</p>
+                        <p>箱子里散发剧烈的咸腥混杂着木头腐朽的气味，最上层是成摞的稿纸，上面写满了某种类似文字的符号，稿纸的下面压着什么东西。安德烈埃屏住呼吸，移开稿纸，在烛光照到下面物品的刹那，嗡鸣声戛然而止。映入眼帘的是一团黑色的物质，很难分辨是动物还是植物，静止，没有生命迹象。形态上像是草本植物的根部团成一团，无数细长弯曲的根茎上，蔓延出数不清的更细的旁系，卷曲着延伸，纠缠，团成一个半米高凹凸不平的球体。安德烈埃心中泛起不详的感觉，草草关上箱子，迅速离开了圣器室。</p>
+
+                        <h3 class="archive-section-marker">02</h3>
+                        <p>安德烈埃在后续的几个月内都没有在日记中提到过圣器室中的不明物体，但是他频繁提及他的梦境以及一个名叫<span class="archive-highlight">克里斯蒂安·罗森克鲁兹</span>的人。根据他之后的手稿以及各方面的记录，我们认为与这件事有着很强的关联。</p>
+                        <p>在他离开圣器室后的第三天，他第一次在日记里提到了这个人，据他描述，从穿着上看克里斯蒂安·罗森克鲁兹是一个之前14到15世纪左右的牧师。这个男人在与他的交谈中反复提到他曾受天使之邀，前往天堂参加了一场特殊的婚礼，从中他领悟到了炼金术的真谛，掌握了那个传说中可以点石成金的<span class="archive-highlight">贤者之石</span>的秘方。安德烈埃向他讨教，但他笑而不语，要安德烈埃先去研究他的手稿。</p>
+                        <p>之后的一段时间，克里斯蒂安·罗森克鲁兹时常造访安德烈埃的梦境，同安德烈埃讲解研究他曾经的手稿，在交流过程中，一种名为<span class="archive-highlight">"精神炼金术"</span>的东西，深深地吸引了安德烈埃，据说习得这种技法，可以达到灵魂的永生。在安德烈埃极度痴迷，研究却毫无进展时，克里斯蒂安·罗森克鲁兹向他提出了组建<span class="archive-highlight">"蔷薇十字会"</span>的想法，最终安德烈埃离开了原本的教堂，以异乡寻光人的身份前往了法兰克福西郊的乡野教堂，并对外发布了宣言，逐步构筑起了蔷薇十字会的雏形。</p>
+
+                        <h3 class="archive-section-marker">03</h3>
+                        <p>随着时间的推移，安德烈埃对精神炼金术的痴迷不减反增，日记逐渐变得混乱，甚至出现了许多无法辨认的奇怪符号。直到他死前的几篇日记，已经完全被奇怪的符号占据，编者也无从得知其中的内容。原本这会是一个不了了之的故事，但在一封来自乡野教堂的敲钟人的信件中，编者找到这样一段话，似乎与这个事件有着某种隐秘的关联。</p>
+                        <p>信件中提到，这名敲钟人在深夜值班时，听到地下室传来剧烈的声响，他前往查看，发现这个地下室布满了黑色的粗壮藤蔓，而那群自称异乡寻光者的首领正趴在地板上，他的身上缠满细长弯曲、形似草本植物根须的黑色长茎，以一种扭曲的姿势被拖拽，顺着拖拽的方向看去，黑色藤蔓和根须都被收束在一口金属镶边的木箱里，而藤蔓根须的尽头是一团浓重看不清形状的黑，无数凸起凹陷震动着发出剧烈的轰鸣。敲钟人头也不回地跑掉，甚至辞去了这份工作。而他后来得知，那个异乡人的尸体，就是在地下室的木箱中被发现的。</p>
+
+                        <!-- ========== 结束按钮与结束语区域 ========== -->
+                        <div class="ending-button-wrapper" id="endingButtonWrapper">
+                            <button class="ending-button" id="endingButton" type="button">
+                                点击结束 <span class="arrow-symbol">→</span>
+                            </button>
+                        </div>
+                        <div class="ending-reveal" id="endingReveal">
+                            <div class="ending-content-inner">
+                                <p>谢谢大家玩到这里，故事到这里就结束了。原本打算在结尾参考化学婚仪的内容设计一段互动，所以结束的有一点仓促。不过克苏鲁本来就是不可名状和未知吗，所以戛然而止的故事本身也非常克苏鲁呀≡ω≡</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <!-- ========== 六大核心会规 ========== -->
+        <section class="rules-section" aria-label="六大核心会规">
+            <h2 class="rules-heading">六大核心会规</h2>
+            <ol class="rules-list">
+                <li>本会一切兄弟，仅以医术无偿救治世人，分文不取，绝不借秘术敛财；</li>
+                <li>兄弟不制作统一制服，随旅居之地风俗正常着装，隐藏身份，不刻意标新立异；</li>
+                <li>每年固定一日全体兄弟赴总会隐秘居所集会，无法到场者必须亲笔书信说明缘由；</li>
+                <li>每位兄弟临终前，必须遴选一名德行、才智相称的后继者，传承自身全部学识；</li>
+                <li>一切书信、器物、秘本、信物，皆以缩写 <span class="rc-mark">R.C.</span> 作为本会专属印记与识别暗号；</li>
+                <li>兄弟会整体保持完全隐匿，与世隔绝百年，不对外公开团体全貌，直至时机成熟。</li>
+            </ol>
+        </section>
+
+    </div>
+
+    <!-- ==================== 底部声明 ==================== -->
+    <footer class="footer-disclaimer">
+        <p class="copyright-line">内容均为虚构，仅供解谜体验</p>
+        <p class="maker-line">©爆炒霸王龙🦖制作</p>
+    </footer>
+
+    <!-- ==================== JavaScript：搜索逻辑 + 结束按钮 ==================== -->
+    <script>
+        (function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchStatus = document.getElementById('searchStatus');
+            const dossierOstarlow = document.getElementById('dossierOstarlow');
+            const dossierAndreae = document.getElementById('dossierAndreae');
+            const dossiersDivider = document.getElementById('dossiersDivider');
+            const searchWrapper = document.getElementById('searchWrapper');
+
+            // 结束按钮相关元素
+            const endingButton = document.getElementById('endingButton');
+            const endingButtonWrapper = document.getElementById('endingButtonWrapper');
+            const endingReveal = document.getElementById('endingReveal');
+
+            // 防抖计时器
+            let debounceTimer = null;
+            const DEBOUNCE_DELAY = 200;
+
+            /**
+             * 更新档案显示状态
+             */
+            function updateArchives(query) {
+                const trimmedQuery = query.trim();
+                const hasOstarlow = trimmedQuery.includes('奥斯达路');
+                const hasAndreae = trimmedQuery.includes('安德烈埃');
+                const hasAnyMatch = hasOstarlow || hasAndreae;
+
+                // 更新奥斯达路档案
+                if (hasOstarlow) {
+                    dossierOstarlow.classList.add('visible');
+                } else {
+                    dossierOstarlow.classList.remove('visible');
+                }
+
+                // 更新安德烈埃档案
+                if (hasAndreae) {
+                    dossierAndreae.classList.add('visible');
+                } else {
+                    dossierAndreae.classList.remove('visible');
+                    // 如果安德烈埃档案被隐藏，重置结束语状态
+                    resetEndingState();
+                }
+
+                // 更新分隔线
+                if (hasOstarlow && hasAndreae) {
+                    dossiersDivider.classList.add('visible');
+                } else {
+                    dossiersDivider.classList.remove('visible');
+                }
+
+                // 更新搜索状态提示
+                if (trimmedQuery === '') {
+                    searchStatus.textContent = '输入关键词以检索档案';
+                    searchStatus.classList.remove('found');
+                    searchWrapper.style.borderColor = '';
+                    searchWrapper.style.boxShadow = '';
+                } else if (hasAnyMatch) {
+                    const matchedParts = [];
+                    if (hasOstarlow) matchedParts.push('「奥斯达路家族」');
+                    if (hasAndreae) matchedParts.push('「约翰·瓦伦丁·安德烈埃」');
+                    searchStatus.textContent = '✦ 已找到匹配档案：' + matchedParts.join('、');
+                    searchStatus.classList.add('found');
+                    searchWrapper.style.borderColor = 'rgba(184,148,92,0.55)';
+                    searchWrapper.style.boxShadow = '0 0 30px rgba(184,148,92,0.18), 0 4px 24px rgba(0,0,0,0.6)';
+                } else {
+                    searchStatus.textContent = '未找到匹配的档案，请尝试其他关键词';
+                    searchStatus.classList.remove('found');
+                    searchWrapper.style.borderColor = '';
+                    searchWrapper.style.boxShadow = '';
+                }
+            }
+
+            /**
+             * 重置结束语状态（按钮可见，结束语隐藏）
+             */
+            function resetEndingState() {
+                if (endingButtonWrapper) {
+                    endingButtonWrapper.classList.remove('hidden');
+                }
+                if (endingReveal) {
+                    endingReveal.classList.remove('visible');
+                }
+                if (endingButton) {
+                    endingButton.disabled = false;
+                    endingButton.style.cursor = 'pointer';
+                    endingButton.style.opacity = '1';
+                }
+            }
+
+            /**
+             * 处理结束按钮点击
+             */
+            function handleEndingClick() {
+                // 隐藏按钮
+                if (endingButtonWrapper) {
+                    endingButtonWrapper.classList.add('hidden');
+                }
+                // 显示结束语
+                if (endingReveal) {
+                    // 使用requestAnimationFrame确保过渡动画触发
+                    requestAnimationFrame(() => {
+                        endingReveal.classList.add('visible');
+                    });
+                }
+                // 禁用按钮防止重复点击
+                if (endingButton) {
+                    endingButton.disabled = true;
+                    endingButton.style.cursor = 'default';
+                    endingButton.style.opacity = '0.5';
+                }
+                // 平滑滚动到结束语区域
+                setTimeout(() => {
+                    if (endingReveal && endingReveal.classList.contains('visible')) {
+                        endingReveal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 150);
+            }
+
+            /**
+             * 处理搜索输入（带防抖）
+             */
+            function handleSearchInput() {
+                const query = searchInput.value;
+                if (debounceTimer) {
+                    clearTimeout(debounceTimer);
+                }
+                debounceTimer = setTimeout(() => {
+                    updateArchives(query);
+                }, DEBOUNCE_DELAY);
+            }
+
+            /**
+             * 立即执行搜索
+             */
+            function handleSearchImmediate() {
+                if (debounceTimer) {
+                    clearTimeout(debounceTimer);
+                }
+                updateArchives(searchInput.value);
+            }
+
+            // 监听输入事件
+            searchInput.addEventListener('input', handleSearchInput);
+
+            // 监听回车键
+            searchInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    handleSearchImmediate();
+                    const firstVisible = document.querySelector('.archive-dossier.visible');
+                    if (firstVisible) {
+                        firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+
+            // 监听中文输入法组合输入
+            let isComposing = false;
+            searchInput.addEventListener('compositionstart', function() {
+                isComposing = true;
+            });
+            searchInput.addEventListener('compositionend', function() {
+                isComposing = false;
+                handleSearchInput();
+            });
+
+            // 绑定结束按钮事件
+            if (endingButton) {
+                endingButton.addEventListener('click', handleEndingClick);
+            }
+
+            // 初始状态
+            updateArchives('');
+
+            // URL查询参数自动填充
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryParam = urlParams.get('q');
+            if (queryParam) {
+                searchInput.value = queryParam;
+                updateArchives(queryParam);
+            }
+
+            console.log('🔍 蔷薇十字会档案检索系统已就绪');
+            console.log('   - 搜索「奥斯达路」查看奥斯达路家族档案');
+            console.log('   - 搜索「安德烈埃」查看约翰·瓦伦丁·安德烈埃档案');
+            console.log('   - 两个关键词可同时搜索，显示双份档案');
+            console.log('   - 在安德烈埃档案末尾点击「点击结束 →」查看故事尾声');
+            console.log('   📜 内容均为虚构，仅供解谜体验');
+        })();
+    </script>
+</body>
+</html>

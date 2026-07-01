@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
+    <title>Caduceus - 赫尔墨斯之语</title>
+    <style>
+        :root {
+            --gold: #c9a96e;
+            --dark: #1a1a1a;
+            --cream: #f5f0e8;
+            --text: #2c2416;
+            --chat-bg: #e8e2d6;
+            --chat-sent: #d4c8a8;
+            --chat-received: #ffffff;
+            --help-bg: #6b2e2e;
+            --help-text: #f5e6c6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', 'Noto Serif SC', 'STSong', 'Songti SC', serif;
+            background: var(--cream);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        .disclaimer-bar {
+            background: #0d0d0d; color: #a09070; text-align: center; padding: 6px 10px;
+            font-size: 0.7rem; letter-spacing: 0.15em; position: fixed; top: 0; left: 0; right: 0;
+            z-index: 1001; font-family: 'Georgia', 'STSong', serif;
+        }
+        .main-header {
+            position: fixed; top: 24px; left: 0; right: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 28px; background: rgba(245,240,232,0.92);
+            backdrop-filter: blur(20px); border-bottom: 1px solid rgba(201,169,110,0.25);
+            transition: all 0.3s ease;
+        }
+        .main-header.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+        .menu-btn {
+            width: 36px; height: 36px; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            gap: 6px; background: none; border: none; z-index: 1002;
+        }
+        .menu-btn span {
+            display: block; width: 24px; height: 2px; background: var(--text);
+            border-radius: 1px; transition: all 0.35s ease; transform-origin: center;
+        }
+        .menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .menu-btn.active span:nth-child(2) { opacity: 0; }
+        .menu-btn.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+        .brand-logo {
+            font-size: 1.5rem; letter-spacing: 0.3em; font-weight: normal;
+            color: var(--text); font-family: 'Georgia', 'Times New Roman', serif;
+            text-transform: lowercase; text-align: center;
+        }
+        .header-icons { display: flex; align-items: center; gap: 18px; }
+        .icon-btn {
+            width: 34px; height: 34px; cursor: pointer; background: none;
+            border: 1px solid transparent; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 1.2rem;
+            color: var(--text); transition: all 0.3s;
+        }
+        .icon-btn:hover { border-color: var(--gold); color: var(--gold); }
+        .side-nav {
+            position: fixed; top: 0; left: -320px; width: 300px; height: 100vh;
+            background: rgba(20,18,15,0.97); z-index: 999; padding: 100px 40px 40px;
+            transition: left 0.45s; display: flex; flex-direction: column; gap: 8px;
+        }
+        .side-nav.open { left: 0; }
+        .side-nav a {
+            color: #d4c8b0; text-decoration: none; padding: 14px 18px;
+            letter-spacing: 0.12em; border-bottom: 1px solid rgba(201,169,110,0.15);
+            transition: all 0.3s; cursor: pointer;
+        }
+        .side-nav a:hover { color: var(--gold); padding-left: 26px; }
+        .side-nav-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 998; display: none;
+        }
+        .side-nav-overlay.show { display: block; }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); z-index: 2000; display: flex;
+            align-items: center; justify-content: center; opacity: 0;
+            pointer-events: none; transition: opacity 0.35s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-box {
+            background: #faf7f1; border-radius: 8px; padding: 40px 35px;
+            width: 90%; max-width: 420px; position: relative; text-align: center;
+        }
+        .modal-close {
+            position: absolute; top: 14px; right: 18px; width: 32px; height: 32px;
+            cursor: pointer; background: none; border: none; font-size: 1.4rem; color: #888;
+        }
+        .main-content { padding-top: 100px; }
+        .hero-section {
+            position: relative; width: 100%; height: 100vh; max-height: 750px;
+            overflow: hidden; background: #000; margin-top: -30px;
+        }
+        .hero-section video { width: 100%; height: 100%; object-fit: cover; }
+        .scroll-hint {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            cursor: pointer; animation: floatHint 2.5s ease-in-out infinite;
+        }
+        @keyframes floatHint { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-12px); } }
+        .scroll-hint .arrow-up {
+            width: 36px; height: 36px; border: 2px solid rgba(255,255,255,0.8);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.9); font-size: 1.2rem;
+        }
+        .section-block { padding: 70px 8%; max-width: 1300px; margin: 0 auto; }
+        .section-title {
+            text-align: center; font-size: 1.8rem; letter-spacing: 0.2em;
+            margin-bottom: 50px; font-weight: normal;
+        }
+        .section-title::after { content:''; display:block; width:50px; height:2px; background:var(--gold); margin:16px auto 0; }
+        .split-row { display: flex; align-items: stretch; gap: 0; min-height: 420px; }
+        .split-row.reverse { flex-direction: row-reverse; }
+        .split-half { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .split-half img { width: 100%; height: 100%; object-fit: cover; }
+        .split-half.text-half {
+            padding: 40px 45px; flex-direction: column; align-items: flex-start;
+            background: #fdfbf7; font-size: 0.95rem; line-height: 2;
+            letter-spacing: 0.04em; color: #3a3028;
+        }
+        .explore-cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 30px; }
+        .explore-card {
+            flex: 1 1 200px; max-width: 240px; text-align: center; cursor: pointer;
+            transition: transform 0.35s; border-radius: 6px; overflow: hidden; background: #fff;
+        }
+        .explore-card:hover { transform: translateY(-6px); }
+        .explore-card img { width: 100%; height: 240px; object-fit: cover; }
+        .card-name { padding: 14px 10px 4px; font-size: 1rem; letter-spacing: 0.1em; }
+        .card-btn {
+            display: inline-block; padding: 8px 22px; margin: 8px 0 18px;
+            background: transparent; border: 1px solid var(--gold); color: var(--gold);
+            cursor: pointer; border-radius: 3px;
+        }
+        .detail-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 3000; background: #f5f0e8; overflow-y: auto; display: none;
+        }
+        .detail-overlay.active { display: block; }
+        .detail-back-btn {
+            position: fixed; top: 32px; left: 20px; z-index: 3002;
+            background: rgba(0,0,0,0.6); color: #fff; border: none;
+            padding: 10px 18px; cursor: pointer; border-radius: 4px;
+        }
+        .detail-hero {
+            position: relative; width: 100%; background: #000;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; transition: all 0.5s;
+        }
+        .detail-hero img {
+            width: 100%; height: auto; max-height: 85vh;
+            object-fit: contain; transition: transform 0.5s;
+        }
+        .swipe-hint {
+            position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.9); letter-spacing: 0.15em; font-size: 0.85rem;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.6); animation: floatHint 2.5s infinite;
+            pointer-events: none;
+        }
+        .gradient-fade {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7)); z-index: 2;
+        }
+        .puzzle-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: rgba(245,240,232,0.97); transform: translateY(100%);
+            transition: transform 0.5s; z-index: 5; padding: 25px 8%;
+            border-top: 2px solid var(--gold); max-height: 60vh; overflow-y: auto;
+        }
+        .detail-hero.puzzle-visible .puzzle-overlay { transform: translateY(0); }
+        .detail-hero.puzzle-visible img { transform: translateY(-15%); }
+        .detail-hero.puzzle-visible .gradient-fade,
+        .detail-hero.puzzle-visible .swipe-hint { opacity: 0; }
+        .pwd-input-group { display: flex; gap: 12px; justify-content: center; }
+        .pwd-input-group input {
+            width: 55px; height: 60px; text-align: center; font-size: 1.6rem;
+            border: 2px solid #c9a96e; border-radius: 6px; background: #fff;
+        }
+        .pwd-submit {
+            display: block; margin: 18px auto 0; padding: 10px 35px;
+            background: var(--gold); color: #fff; border: none; cursor: pointer; border-radius: 4px;
+        }
+        .reveal-text {
+            text-align: center; background: #0d0d0d; color: #c9a96e;
+            font-size: 2.8rem; letter-spacing: 0.5em; padding: 30px;
+            margin: 20px auto; border-radius: 8px; display: none; max-width: 400px;
+            text-shadow: 0 0 20px rgba(201,169,110,0.5);
+        }
+        .reveal-text.show { display: block; animation: goldReveal 0.8s; }
+        @keyframes goldReveal { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+        .detail-content-row {
+            display: flex; gap: 30px; padding: 30px 8%; max-width: 1200px;
+            margin: 0 auto; flex-wrap: wrap; align-items: flex-start;
+        }
+        .detail-content-row img { flex: 0 0 300px; max-width: 100%; border-radius: 6px; object-fit: cover; }
+        .rotate-btns { display: flex; gap: 15px; justify-content: center; margin: 15px 0; }
+        .rotate-btn {
+            background: #fff; border: 2px solid var(--gold); padding: 10px 20px;
+            cursor: pointer; border-radius: 4px; transition: all 0.3s;
+        }
+        .rotate-btn:hover { background: var(--gold); color: #fff; }
+        .puzzle-canvas-wrap { text-align: center; margin: 15px auto; }
+        .puzzle-canvas-wrap canvas { max-width: 100%; border-radius: 50%; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .color-drag-area { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 20px 0; }
+        .color-chip {
+            width: 50px; height: 50px; border-radius: 8px; cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15); border: 2px solid transparent; transition: 0.2s;
+        }
+        .color-chip.selected { border: 3px solid #000; transform: scale(1.1); }
+        .drop-slots { display: flex; gap: 20px; justify-content: center; margin: 20px 0; }
+        .drop-slot {
+            width: 70px; height: 70px; border: 3px dashed #c9a96e; border-radius: 10px;
+            background: #fff; display: flex; align-items: center; justify-content: center;
+            transition: 0.3s; font-size: 0.8rem; color: #bbb; cursor: pointer;
+        }
+        .drop-slot.filled { border-style: solid; border-color: #555; font-weight: bold; color: #333; }
+        .hint-text-small { text-align: center; color: #888; font-size: 0.85rem; letter-spacing: 0.08em; margin-top: 10px; }
+        .dual-offer { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+        .offer-card {
+            flex: 1 1 350px; max-width: 500px; position: relative; overflow: hidden;
+            border-radius: 8px; cursor: pointer; background: #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            min-height: 350px;
+        }
+        .offer-img-wrap { position: relative; width: 100%; height: 350px; overflow: hidden; transition: transform 0.5s; }
+        .offer-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .offer-text-hidden {
+            position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.96);
+            padding: 25px 20px; transform: translateY(100%); transition: transform 0.5s;
+            font-size: 0.85rem; line-height: 1.8; color: #3a3028; border-top: 2px solid var(--gold);
+        }
+        .offer-card.revealed .offer-text-hidden { transform: translateY(0); }
+        .offer-card.revealed .offer-img-wrap { transform: translateY(-60%); opacity: 0.3; }
+        .offer-label { text-align: center; padding: 14px; background: #fdfbf7; }
+        .site-footer {
+            background: #1a1815; color: #b0a590; padding: 50px 8% 30px;
+            display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between;
+            font-size: 0.85rem; letter-spacing: 0.05em; line-height: 2;
+        }
+        .footer-col h4 { color: #d4c8b0; margin-bottom: 12px; font-weight: normal; }
+        .footer-col a { color: #b0a590; text-decoration: none; display: block; cursor: pointer; }
+        .footer-col a:hover { color: var(--gold); }
+        .footer-bottom {
+            text-align: center; padding: 20px; background: #0d0c0a;
+            color: #6b6055; font-size: 0.75rem;
+        }
+        .footer-bottom span { display: block; margin-top: 4px; opacity: 0.7; font-size: 0.7rem; }
+        .floating-btn {
+            position: fixed; bottom: 25px; right: 25px; width: 55px; height: 55px;
+            border-radius: 50%; background: var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 4000; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; transition: 0.3s; border: none;
+        }
+        .floating-btn:hover { transform: scale(1.1); background: #b8943d; }
+        .floating-btn svg {
+            width: 28px; height: 28px; fill: none; stroke: #fff;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .floating-hint {
+            position: fixed; bottom: 85px; right: 15px; background: rgba(0,0,0,0.75);
+            color: #f0e6d2; padding: 6px 14px; border-radius: 20px; font-size: 0.7rem;
+            letter-spacing: 0.06em; z-index: 4001; white-space: nowrap; pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .pic-modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); z-index: 5000; display: flex;
+            align-items: center; justify-content: center; opacity: 0;
+            pointer-events: none; transition: 0.4s;
+        }
+        .pic-modal.active { opacity: 1; pointer-events: all; }
+        .pic-modal img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
+        .pic-modal-close {
+            position: absolute; top: 25px; right: 30px; font-size: 2rem;
+            color: #fff; cursor: pointer; background: none; border: none;
+        }
+
+        /* 客服聊天样式 */
+        .chat-container {
+            display: flex; flex-direction: column; height: 100vh; background: #e8e2d6;
+            font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        .chat-header {
+            background: #3a3028; color: #f0e6d2; padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            letter-spacing: 0.08em; font-size: 1rem;
+        }
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 20px;
+            display: flex; flex-direction: column; gap: 16px;
+        }
+        .message {
+            max-width: 75%; padding: 12px 18px; border-radius: 18px;
+            line-height: 1.5; word-break: break-word; font-size: 0.95rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .message.received {
+            align-self: flex-start; background: #fff; border-bottom-left-radius: 6px;
+        }
+        .message.sent {
+            align-self: flex-end; background: #d4c8a8; border-bottom-right-radius: 6px;
+        }
+        .chat-input-area {
+            display: flex; padding: 12px 15px; background: #fff;
+            border-top: 1px solid #d9cfb8;
+        }
+        .chat-input-area input {
+            flex: 1; padding: 12px 16px; border: 1px solid #c9bda0;
+            border-radius: 25px; font-size: 0.95rem; outline: none;
+            font-family: inherit; background: #faf7f1;
+        }
+        .chat-input-area button {
+            margin-left: 10px; padding: 0 22px; background: #3a3028; color: #f0e6d2;
+            border: none; border-radius: 25px; cursor: pointer; font-size: 0.9rem;
+            letter-spacing: 0.05em; transition: 0.3s;
+        }
+        .chat-input-area button:hover { background: #5a4d40; }
+
+        /* 全屏求助信样式 */
+        .fullscreen-letter {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--help-bg); color: var(--help-text);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center;
+            padding: 40px 8%; overflow-y: auto;
+            z-index: 10;
+        }
+        .fullscreen-letter h2 {
+            font-size: 2rem; letter-spacing: 0.3em; margin-bottom: 30px;
+            font-weight: normal; text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+        }
+        .fullscreen-letter p {
+            line-height: 2; margin-bottom: 1.5em; font-size: 1rem;
+            letter-spacing: 0.05em; max-width: 600px;
+        }
+        .fullscreen-letter .help-btn {
+            display: inline-block; margin-top: 20px; padding: 14px 40px;
+            background: #f0e6d2; color: var(--help-bg); border: none;
+            border-radius: 30px; font-size: 1rem; letter-spacing: 0.15em;
+            cursor: pointer; transition: 0.3s; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .fullscreen-letter .help-btn:hover { background: #fff; transform: translateY(-2px); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="disclaimer-bar">⚠ 内容均为虚构 仅供游戏体验 ⚠</div>
+    <header class="main-header" id="mainHeader">
+        <button class="menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
+        <div class="brand-logo">caduceus</div>
+        <div class="header-icons">
+            <button class="icon-btn" id="userIcon">👤</button>
+            <button class="icon-btn" id="cartIcon">🛒</button>
+        </div>
+    </header>
+    <nav class="side-nav" id="sideNav">
+        <a data-target="explore-section">新品探索</a>
+        <a data-target="classic-section">经典香氛</a>
+        <a data-target="care-section">洗护套组</a>
+        <a data-target="page2">客服</a>
+    </nav>
+    <div class="side-nav-overlay" id="sideNavOverlay"></div>
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box"><button class="modal-close" id="loginClose">✕</button><h3>登录 Caduceus</h3><input type="text" placeholder="用户名 / 邮箱"><input type="password" placeholder="密码"><button class="btn-gold">登 录</button></div>
+    </div>
+    <div class="modal-overlay" id="cartModal">
+        <div class="modal-box"><button class="modal-close" id="cartClose">✕</button><h3>购物车</h3><p class="cart-empty">暂无加购商品</p></div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <section class="hero-section" id="heroSection">
+            <video src="video1.mp4" autoplay loop muted playsinline preload="auto"></video>
+            <div class="scroll-hint" id="scrollHint"><div class="arrow-up">↑</div><span class="hint-text">上划开始探索</span></div>
+        </section>
+        <section class="section-block" id="explore-section">
+            <h2 class="section-title">新品探索</h2>
+            <div class="split-row"><div class="split-half"><img src="pic1.jpg" alt="新品探索" onerror="this.style.background='#d5cdbd';this.style.minHeight='350px';"></div><div class="split-half text-half"><p>翠玉录有言：“太阳为父，月亮为母，从风孕育，从地养护。”</p><p>三重伟大的赫尔墨斯将宇宙的奥秘刻于祖母绿宝石之上——如今，这十三句箴言化作四重香气，从你的肌肤上苏醒。</p><p>“如其在上，如其在下。”大宇宙的日月风地，照见你小宇宙的灵魂与渴望。这是一场炼金术的嗅觉仪式——将光、影、气流与大地，在瓶中蒸馏、升华、转化。</p><p>赫尔墨斯之语。闻见万物创世之初的气息。</p></div></div>
+            <div class="explore-cards" id="exploreCards">
+                <div class="explore-card" data-name="风之语"><img src="pic2.jpg" alt="风之语"><div class="card-name">风之语</div><button class="card-btn">→点击探索</button></div>
+                <div class="explore-card" data-name="月之语"><img src="pic3.jpg" alt="月之语"><div class="card-name">月之语</div><button class="card-btn">→点击探索</button></div>
+                <div class="explore-card" data-name="日之语"><img src="pic4.jpg" alt="日之语"><div class="card-name">日之语</div><button class="card-btn">→点击探索</button></div>
+                <div class="explore-card" data-name="地之语"><img src="pic5.jpg" alt="地之语"><div class="card-name">地之语</div><button class="card-btn">→点击探索</button></div>
+            </div>
+        </section>
+        <section class="section-block" id="classic-section">
+            <h2 class="section-title">经典香氛</h2>
+            <div class="split-row reverse"><div class="split-half"><img src="pic6.jpg" alt="经典香氛" onerror="this.style.background='#bfb8a8';this.style.minHeight='350px';"></div><div class="split-half text-half"><p><strong>双蛇缠绕，万灵交会。</strong></p><p>这支香是Caduceus的“第一配方”——它不指向任何单一自然元素，而是炼金术中“蛇与杖”的二元合一：上方是对立的蛇（热与冷、干与湿），下方是贯通天地的权杖（平衡与上升）。在翠玉录的语境里，它是“分而后合”的最终产物，是一切转化完成后的纯粹本质。</p><p>我们为它甄选了一座古老的炼金术工坊——铜质蒸馏器静静泛着绿锈，书架上散落着羊皮纸，空气中漂浮着树脂、金属与草本交织的古老气息。那不是某一个场景的复制，而是所有炼金实验的“元场景”。</p><p>它不诠释光、月、风、地，而是它们调和后的“第五元素”——以太。闻见它，便闻见了赫尔墨斯本人的呼吸。</p><p><em>前调：苦橙叶、乳香、小茴香<br>中调：没药、天竺葵、玫瑰<br>后调：龙涎香、岩蔷薇、愈创木、烟草</em></p><p>Caduceus 经典香氛。双蛇之吻，万物归一。</p></div></div>
+        </section>
+        <section class="section-block" id="care-section">
+            <h2 class="section-title">洗护套组</h2>
+            <div class="split-row"><div class="split-half"><img src="pic7.jpg" alt="洗护套组" onerror="this.style.background='#d0ccc4';this.style.minHeight='350px';"></div><div class="split-half text-half"><p><strong>每日的清洁，不是重复，而是转化。</strong></p><p>我们将“伟大工作”从瓶中的香气延伸至肌肤的每一次触感。洗护套组包含沐浴露、身体乳与洗手液，每一款都承载着“净化、溶解、重铸”的三重炼金步骤：</p><p>· 沐浴露 —— 以“水”之力，溶解日间尘埃，如同翠玉录所言“从地升天”，让附着于表的污浊升腾而去；</p><p>· 身体乳 —— 以“土”之力，滋养固本，让水分“又从天而降”，锁入肌肤深处；</p><p>· 洗手液 —— 以“风”之力，吹散指尖残留的琐碎，每一次洗手都是一次微型的“萃精于糙”。</p><p>洗护套组不单独调香，而是将品牌经典香氛的“原初之息”以更轻盈的方式融入其中——泡沫绵密如月光，余韵温润如大地。每日沐浴，便是一座私人的炼金室；水汽氤氲中，你完成了属于今日的“转化仪式”。</p><p>Caduceus 洗护套组。清洁即神圣，日常即奇迹。</p></div></div>
+        </section>
+        <section class="section-block" id="gift-section">
+            <h2 class="section-title">双重礼遇</h2>
+            <div class="dual-offer">
+                <div class="offer-card" id="offerCard1"><div class="offer-img-wrap"><img src="pic8.jpg" alt="个性定制"><span class="offer-swipe-hint">↑ 上滑查看详情</span></div><div class="offer-text-hidden"><strong>个性定制 —— 您的专属炼金配方</strong><br><br>每一位灵魂都有其独特的“行星印记”。Caduceus 提供一对一气味诊断服务，由首席调香师根据您的出生星盘、性格特质与记忆偏好，从上百种天然原料中为您单独谱写一支“只属于您”的香气。每一份定制方案都附有调香师亲笔书写的“炼金配方说明”，如同翠玉录中那句“此即全书之最上智”——为您而作的，便是世间最上智。</div><div class="offer-label">个性定制</div></div>
+                <div class="offer-card" id="offerCard2"><div class="offer-img-wrap"><img src="pic9.jpg" alt="精美包装"><span class="offer-swipe-hint">↑ 上滑查看详情</span></div><div class="offer-text-hidden"><strong>精美包装 —— 可传世的艺术封缄</strong><br><br>每一件Caduceus作品，皆以手工制作的墨绿色礼盒封装，外覆金箔压印的双蛇杖徽章，内衬丝绒，并附有仿羊皮纸的“翠玉录箴言卡”。您可要求在瓶身蚀刻姓名、日期或一句私人寄语——让这瓶香气不再是消费品，而是专属的“护身符”。礼盒开启时，如唤醒一座微型圣殿；合上时，则是一份值得代代相传的寂静之美。</div><div class="offer-label">精美包装</div></div>
+            </div>
+        </section>
+    </div>
+    <footer class="site-footer">
+        <div class="footer-col"><h4>顾客服务</h4><a>联系我们</a><a>配送与退换</a><a>常见问题</a></div>
+        <div class="footer-col"><h4>条款与政策</h4><a>会员规则</a><a>个人信息处理规则</a><a>销售通用条款和条件</a><a>产品标签查询</a></div>
+        <div class="footer-col"><h4>关注我们</h4><a>微信</a><a>微博</a><a>小红书</a><a>抖音</a></div>
+    </footer>
+    <div class="footer-bottom">© 爆炒霸王龙备案<span>内容均为虚构，仅供解谜体验</span></div>
+
+    <!-- 风之语详情 -->
+    <div class="detail-overlay" id="detailWind">
+        <button class="detail-back-btn" data-close="detailWind">← 返回</button>
+        <div class="detail-hero" id="windHero">
+            <img src="pic10.jpg" alt="风之语">
+            <div class="gradient-fade"></div>
+            <div class="swipe-hint">上滑输入密码</div>
+            <div class="puzzle-overlay">
+                <div class="pwd-input-group"><input type="text" maxlength="1" class="pwd-char"><input type="text" maxlength="1" class="pwd-char"><input type="text" maxlength="1" class="pwd-char"><input type="text" maxlength="1" class="pwd-char"></div>
+                <button class="pwd-submit" id="windPwdSubmit">确认</button>
+                <div class="reveal-text" id="windReveal">H___</div>
+            </div>
+        </div>
+        <div class="detail-content-row">
+            <img src="pic2.jpg" alt="风之语">
+            <div class="detail-text"><p><strong>【风之语 —— 从风孕育】</strong></p><p>我们为它甄选了一个海边小镇的午后。阳光明媚得耀眼，街道却空无一人，只有海风穿梭于每一条缝隙，拂过晾晒的渔网、褪色的百叶窗和沙粒；海鸥低低掠过屋檐，将自由的气息抛向每一个角落。风来了又走，却改变了所有。</p><p>看不见的力量，改变一切。风是翠玉录中最神秘的信使——它“孕育”万物，却从不被捕获。在风之语中，你闻到的是“萃精于糙，谨慎行之”的微妙瞬间，是物质与心灵同时被净化的那一刻。</p><p><em>前调：青柠、薄荷、小豆蔻<br>中调：海洋气息、绿茶、罗勒<br>后调：白麝香、雪松、鸢尾根</em></p></div>
+        </div>
+    </div>
+
+    <!-- 月之语详情（色块点击） -->
+    <div class="detail-overlay" id="detailMoon">
+        <button class="detail-back-btn" data-close="detailMoon">← 返回</button>
+        <div class="detail-hero" id="moonHero">
+            <img src="pic11.jpg" alt="月之语">
+            <div class="gradient-fade"></div>
+            <div class="swipe-hint">上滑解谜</div>
+            <div class="puzzle-overlay">
+                <p class="hint-text-small">点击色块并点击对应方块完成解密</p>
+                <div class="color-drag-area" id="moonColorChips">
+                    <div class="color-chip" data-color="红" style="background:#e74c3c;"></div>
+                    <div class="color-chip" data-color="橙" style="background:#f39c12;"></div>
+                    <div class="color-chip" data-color="黄" style="background:#f1c40f;"></div>
+                    <div class="color-chip" data-color="绿" style="background:#2ecc71;"></div>
+                    <div class="color-chip" data-color="青" style="background:#1abc9c;"></div>
+                    <div class="color-chip" data-color="蓝" style="background:#3498db;"></div>
+                    <div class="color-chip" data-color="紫" style="background:#9b59b6;"></div>
+                </div>
+                <div class="drop-slots">
+                    <div class="drop-slot" data-slot="0" data-accept="紫">拖至此处</div>
+                    <div class="drop-slot" data-slot="1" data-accept="橙">拖至此处</div>
+                    <div class="drop-slot" data-slot="2" data-accept="绿">拖至此处</div>
+                </div>
+                <button class="pwd-submit" id="moonCheckBtn">检查解谜</button>
+                <div class="reveal-text" id="moonReveal">_il__</div>
+            </div>
+        </div>
+        <div class="detail-content-row">
+            <img src="pic3.jpg" alt="月之语">
+            <div class="detail-text"><p><strong>【月之语 —— 月亮为母】</strong></p><p>我们为它甄选了一条空无一人的午夜街道。三块广告牌静默地附着在墙壁外立面上，月光像一只无形的手，轻轻抚摸过每一块铁皮与玻璃的边缘，投下淡淡的银蓝色反光。没有行人，只有月光的低语在耳边回响。</p><p>在月光里，万物被孕育。月之语不灼目，却温柔地渗透——它是翠玉录中那幽微而丰饶的阴性力量，像炼金术士在深夜凝视坩埚中缓缓转化的物质，等待“从地升天，又从天而降”的奇迹。</p><p><em>前调：佛手柑、荔枝、紫罗兰叶<br>中调：晚香玉、鸢尾、茉莉<br>后调：麝香、零陵香豆、白琥珀</em></p></div>
+        </div>
+    </div>
+
+    <!-- 日之语详情（旋转圆环） -->
+    <div class="detail-overlay" id="detailSun">
+        <button class="detail-back-btn" data-close="detailSun">← 返回</button>
+        <div class="detail-hero" id="sunHero">
+            <img src="pic12.jpg" alt="日之语">
+            <div class="gradient-fade"></div>
+            <div class="swipe-hint">上滑解谜</div>
+            <div class="puzzle-overlay">
+                <div class="puzzle-canvas-wrap"><canvas id="sunCanvas" width="400" height="400"></canvas></div>
+                <div class="rotate-btns">
+                    <button class="rotate-btn" data-ring="0">外圈圆形 ↻</button>
+                    <button class="rotate-btn" data-ring="1">中圈三角形 ↻</button>
+                    <button class="rotate-btn" data-ring="2">内圈正方形 ↻</button>
+                </div>
+                <button class="pwd-submit" id="sunCheckBtn">检查解谜</button>
+                <div class="reveal-text" id="sunReveal">__f_</div>
+            </div>
+        </div>
+        <div class="detail-content-row">
+            <img src="pic4.jpg" alt="日之语">
+            <div class="detail-text"><p><strong>【日之语 —— 太阳为父】</strong></p><p>我们为它甄选了一座幽深的山洞。穹顶唯有一处裂隙，正午时分，一束阳光垂直贯穿黑暗，丁达尔效应将其凝成一道肉眼可触的光柱，尘粒在其中飞舞如星屑。那便是创世的第一道光，从“太一”分化而出，不可直视，却照亮一切。</p><p>光，是第一道炼金术。在日之语中，你嗅到的是伟大工作的起点——理性与灵魂从圆满中层层放射的辉煌。它灼热、神圣，如炼金术士直视太阳而得到的启示。</p><p><em>前调：血橙、粉红胡椒、藏红花<br>中调：肉桂、焚香、橙花<br>后调：琥珀、檀香木、劳丹脂</em></p></div>
+        </div>
+    </div>
+
+    <!-- 地之语详情 -->
+    <div class="detail-overlay" id="detailEarth">
+        <button class="detail-back-btn" data-close="detailEarth">← 返回</button>
+        <div class="detail-hero" id="earthHero">
+            <img src="pic13.jpg" alt="地之语">
+            <div class="gradient-fade"></div>
+            <div class="swipe-hint">上滑解谜</div>
+            <div class="puzzle-overlay">
+                <div class="pwd-input-group"><input type="text" maxlength="1" class="pwd-char-earth"><input type="text" maxlength="1" class="pwd-char-earth"><input type="text" maxlength="1" class="pwd-char-earth"><input type="text" maxlength="1" class="pwd-char-earth"></div>
+                <button class="pwd-submit" id="earthPwdSubmit">确认</button>
+                <div class="reveal-text" id="earthReveal">___e</div>
+            </div>
+        </div>
+        <div class="detail-content-row">
+            <img src="pic5.jpg" alt="地之语">
+            <div class="detail-text"><p><strong>【地之语 —— 从地养护】</strong></p><p>我们为它甄选了金字塔深处的墓穴。翠玉录石板静卧于前，脚下是未经修饰的土铺地面，粗粝、原始、带着千年的潮意。那是万物回归之处，也是伟大工作最终完成的圣所——土，承载所有，养护所有，从不喧哗。</p><p>一切完美之源，在此处。翠玉录说：“世间一切完美之源就在此地；其能力在地上最为完全。”地之语是这场炼金之旅的终点与起点——它是“分土于火”后沉淀下来的本质，是香气从升腾到降落、获得“其上其下之能力”后的圆满。</p><p><em>前调：葡萄柚、胡萝卜籽、芫荽<br>中调：无花果、天竺葵、薰衣草<br>后调：香根草、广藿香、橡苔、岩兰草</em></p></div>
+        </div>
+    </div>
+
+    <!-- 客服页面（聊天界面 + 全屏求助信） -->
+    <div class="detail-overlay" id="page2Overlay">
+        <button class="detail-back-btn" data-close="page2Overlay">← 返回</button>
+        <div style="position:relative; width:100%; height:100%;">
+            <!-- 聊天界面 -->
+            <div class="chat-container" id="chatContainer">
+                <div class="chat-header">
+                    <span>🔮 Caduceus 客服</span>
+                    <span style="font-size:0.8rem;opacity:0.7;">在线</span>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message received">您好，请问有什么可以帮您？</div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" placeholder="输入消息..." autofocus>
+                    <button id="chatSendBtn">发送</button>
+                </div>
+            </div>
+            <!-- 全屏求助信（初始隐藏） -->
+            <div class="fullscreen-letter hidden" id="helpLetter">
+                <h2>求助信</h2>
+                <p>探索者，感谢你来到这里，或许有些冒昧，但是我不得不向你发出请求。我想尽了所有办法，这是我最后的机会。我的时间不多了，那些疯狂的声音已经越来越清晰了。虽然很抱歉将你卷进来，但是不好意思了。</p>
+                <p>下面这个网址是我这些年收集到的，唯一能和外界对应上的线索，那里或许能找到救我们的办法。你会不会想问为什么是“我们”？没错，这封信出现在你屏幕上的那一刻，那些虚空中的注视就已经向你投来轻轻一瞥了，别停留了，去想办法逃离吧，毕竟现在我们是一条绳上的蚂蚱了！</p>
+                <button class="help-btn" id="goPage4Btn">点击这里跳转</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="floating-btn" id="floatingBtn" title="点击查看商品宣传页线索">
+        <svg viewBox="0 0 24 24">
+            <polyline points="4 4 20 20"></polyline>
+            <polyline points="4 20 20 4"></polyline>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+        </svg>
+    </button>
+    <span class="floating-hint">点击查看商品宣传页线索</span>
+    <div class="pic-modal" id="picModal">
+        <button class="pic-modal-close" id="picModalClose">✕</button>
+        <img src="pic14.jpg" alt="隐藏图片" id="picModalImg">
+    </div>
+
+    <script>
+        (function() {
+            const sessionSolved = {};
+
+            const menuBtn = document.getElementById('menuBtn');
+            const sideNav = document.getElementById('sideNav');
+            const sideNavOverlay = document.getElementById('sideNavOverlay');
+            const loginModal = document.getElementById('loginModal');
+            const cartModal = document.getElementById('cartModal');
+            const userIcon = document.getElementById('userIcon');
+            const cartIcon = document.getElementById('cartIcon');
+            const loginClose = document.getElementById('loginClose');
+            const cartClose = document.getElementById('cartClose');
+
+            function toggleNav(open) {
+                sideNav.classList.toggle('open', open);
+                sideNavOverlay.classList.toggle('show', open);
+                menuBtn.classList.toggle('active', open);
+            }
+            menuBtn.addEventListener('click', () => toggleNav(!sideNav.classList.contains('open')));
+            sideNavOverlay.addEventListener('click', () => toggleNav(false));
+            sideNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    toggleNav(false);
+                    if (target === 'page2') {
+                        document.getElementById('page2Overlay').classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                        // 重置聊天界面（如果之前显示了求助信，切回聊天）
+                        document.getElementById('chatContainer').classList.remove('hidden');
+                        document.getElementById('helpLetter').classList.add('hidden');
+                        setTimeout(() => document.getElementById('chatInput')?.focus(), 100);
+                        return;
+                    }
+                    const el = document.getElementById(target);
+                    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 300);
+                });
+            });
+
+            function openModal(m) { m.classList.add('active'); }
+            function closeModal(m) { m.classList.remove('active'); }
+            userIcon.addEventListener('click', () => openModal(loginModal));
+            cartIcon.addEventListener('click', () => openModal(cartModal));
+            loginClose.addEventListener('click', () => closeModal(loginModal));
+            cartClose.addEventListener('click', () => closeModal(cartModal));
+            loginModal.addEventListener('click', e => { if (e.target === loginModal) closeModal(loginModal); });
+            cartModal.addEventListener('click', e => { if (e.target === cartModal) closeModal(cartModal); });
+
+            document.getElementById('scrollHint').addEventListener('click', () => {
+                document.getElementById('explore-section').scrollIntoView({ behavior: 'smooth' });
+            });
+            window.addEventListener('scroll', () => {
+                document.getElementById('mainHeader').classList.toggle('scrolled', window.scrollY > 50);
+            });
+
+            let activeDetailId = null;
+            function openDetail(id) {
+                document.querySelectorAll('.detail-overlay').forEach(d => d.classList.remove('active'));
+                const detail = document.getElementById(id);
+                if (!detail) return;
+                detail.classList.add('active');
+                activeDetailId = id;
+                document.body.style.overflow = 'hidden';
+                const hero = detail.querySelector('.detail-hero');
+                if (hero) hero.classList.remove('puzzle-visible');
+                detail.querySelectorAll('.reveal-text').forEach(r => r.classList.remove('show'));
+                detail.querySelectorAll('input[type="text"]').forEach(inp => inp.value = '');
+                if (id === 'detailSun') resetSunPuzzle();
+                if (id === 'detailMoon') resetMoonColorPuzzle();
+                if (sessionSolved[id]) {
+                    if (hero) hero.classList.add('puzzle-visible');
+                    const revealText = detail.querySelector('.reveal-text');
+                    if (revealText) revealText.classList.add('show');
+                }
+                detail.scrollTop = 0;
+            }
+            function closeDetail(id) {
+                const detail = document.getElementById(id);
+                if (detail) {
+                    detail.classList.remove('active');
+                    document.body.style.overflow = '';
+                    activeDetailId = null;
+                }
+            }
+            document.querySelectorAll('.detail-back-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.getAttribute('data-close');
+                    if (target === 'page2Overlay') {
+                        document.getElementById('page2Overlay').classList.remove('active');
+                        document.body.style.overflow = '';
+                        return;
+                    }
+                    closeDetail(target);
+                });
+            });
+
+            function setupHeroSwipe(heroId) {
+                const hero = document.getElementById(heroId);
+                if (!hero) return;
+                let puzzleVisible = false;
+                const threshold = 35;
+                hero.addEventListener('wheel', function(e) {
+                    if (e.deltaY > threshold && !puzzleVisible) {
+                        hero.classList.add('puzzle-visible');
+                        puzzleVisible = true;
+                    } else if (e.deltaY < -threshold && puzzleVisible) {
+                        hero.classList.remove('puzzle-visible');
+                        puzzleVisible = false;
+                    }
+                }, { passive: true });
+                hero.addEventListener('touchstart', function(e) { this._startY = e.touches[0].clientY; }, { passive: true });
+                hero.addEventListener('touchmove', function(e) {
+                    const dy = this._startY - e.touches[0].clientY;
+                    if (dy > threshold && !puzzleVisible) {
+                        hero.classList.add('puzzle-visible');
+                        puzzleVisible = true;
+                    } else if (dy < -threshold && puzzleVisible) {
+                        hero.classList.remove('puzzle-visible');
+                        puzzleVisible = false;
+                    }
+                }, { passive: true });
+                hero.addEventListener('mousedown', function(e) { this._startY = e.clientY; });
+                hero.addEventListener('mousemove', function(e) {
+                    if (e.buttons !== 1) return;
+                    const dy = this._startY - e.clientY;
+                    if (dy > threshold && !puzzleVisible) {
+                        hero.classList.add('puzzle-visible');
+                        puzzleVisible = true;
+                    } else if (dy < -threshold && puzzleVisible) {
+                        hero.classList.remove('puzzle-visible');
+                        puzzleVisible = false;
+                    }
+                });
+                hero.querySelector('.swipe-hint')?.addEventListener('click', () => {
+                    hero.classList.add('puzzle-visible');
+                    puzzleVisible = true;
+                });
+            }
+            setupHeroSwipe('windHero');
+            setupHeroSwipe('moonHero');
+            setupHeroSwipe('sunHero');
+            setupHeroSwipe('earthHero');
+
+            // 风之语密码
+            document.getElementById('windPwdSubmit').addEventListener('click', () => {
+                const inputs = document.querySelectorAll('#windHero .pwd-char');
+                let code = '';
+                inputs.forEach(inp => code += inp.value);
+                if (code === '6962') {
+                    sessionSolved.detailWind = true;
+                    document.getElementById('windReveal').classList.add('show');
+                } else alert('密码错误');
+            });
+            document.querySelectorAll('#windHero .pwd-char').forEach((inp, idx, all) => {
+                inp.addEventListener('input', () => { if (inp.value.length && idx < all.length - 1) all[idx + 1].focus(); });
+                inp.addEventListener('keydown', e => { if (e.key === 'Backspace' && !inp.value && idx > 0) all[idx - 1].focus(); });
+            });
+
+            // 地之语密码
+            document.getElementById('earthPwdSubmit').addEventListener('click', () => {
+                const inputs = document.querySelectorAll('#earthHero .pwd-char-earth');
+                let code = '';
+                inputs.forEach(inp => code += inp.value);
+                if (code === '3945') {
+                    sessionSolved.detailEarth = true;
+                    document.getElementById('earthReveal').classList.add('show');
+                } else alert('密码错误');
+            });
+            document.querySelectorAll('#earthHero .pwd-char-earth').forEach((inp, idx, all) => {
+                inp.addEventListener('input', () => { if (inp.value.length && idx < all.length - 1) all[idx + 1].focus(); });
+                inp.addEventListener('keydown', e => { if (e.key === 'Backspace' && !inp.value && idx > 0) all[idx - 1].focus(); });
+            });
+
+            // 日之语旋转圆环
+            const sunCanvas = document.getElementById('sunCanvas');
+            const sunCtx = sunCanvas.getContext('2d');
+            let sunAngles = [315, 315, 315];
+            const sunTarget = [315, 135, 225];
+
+            function drawSun() {
+                sunCtx.clearRect(0, 0, 400, 400);
+                const cx = 200, cy = 200;
+                sunCtx.fillStyle = '#faf7f1';
+                sunCtx.beginPath(); sunCtx.arc(cx, cy, 195, 0, Math.PI*2); sunCtx.fill();
+                sunCtx.strokeStyle = '#d4c8b0'; sunCtx.lineWidth = 2;
+                sunCtx.beginPath(); sunCtx.arc(cx, cy, 195, 0, Math.PI*2); sunCtx.stroke();
+                [180,140,100].forEach((r,i) => {
+                    sunCtx.beginPath(); sunCtx.arc(cx, cy, r, 0, Math.PI*2);
+                    sunCtx.strokeStyle = '#e6dcc8'; sunCtx.lineWidth = 28; sunCtx.stroke();
+                });
+                sunCtx.strokeStyle = '#cfc4ad'; sunCtx.lineWidth = 1; sunCtx.setLineDash([6,10]);
+                sunCtx.beginPath(); sunCtx.moveTo(cx-190,cy); sunCtx.lineTo(cx+190,cy);
+                sunCtx.moveTo(cx,cy-190); sunCtx.lineTo(cx,cy+190); sunCtx.stroke();
+                sunCtx.setLineDash([]);
+                const drawShape = (angle, r, type) => {
+                    const rad = angle * Math.PI/180;
+                    const x = cx + r * Math.cos(rad), y = cy + r * Math.sin(rad);
+                    sunCtx.fillStyle = '#1a1a1a'; sunCtx.strokeStyle = '#fff'; sunCtx.lineWidth = 2;
+                    if (type === 'circle') { sunCtx.beginPath(); sunCtx.arc(x,y,10,0,Math.PI*2); sunCtx.fill(); sunCtx.stroke(); }
+                    else if (type === 'triangle') { sunCtx.beginPath(); sunCtx.moveTo(x,y-10); sunCtx.lineTo(x+9,y+8); sunCtx.lineTo(x-9,y+8); sunCtx.closePath(); sunCtx.fill(); sunCtx.stroke(); }
+                    else if (type === 'square') { sunCtx.fillRect(x-8,y-8,16,16); sunCtx.strokeRect(x-8,y-8,16,16); }
+                };
+                drawShape(sunAngles[0], 166, 'circle');
+                drawShape(sunAngles[1], 126, 'triangle');
+                drawShape(sunAngles[2], 86, 'square');
+            }
+            function resetSunPuzzle() { sunAngles = [315,315,315]; drawSun(); document.getElementById('sunReveal').classList.remove('show'); }
+            document.querySelectorAll('#sunHero .rotate-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const ring = parseInt(this.getAttribute('data-ring'));
+                    sunAngles[ring] = (sunAngles[ring] + 90) % 360;
+                    drawSun();
+                });
+            });
+            document.getElementById('sunCheckBtn').addEventListener('click', () => {
+                const ok = sunAngles.every((a,i) => Math.abs(a - sunTarget[i]) < 5 || Math.abs(a - sunTarget[i] - 360) < 5);
+                if (ok) {
+                    sessionSolved.detailSun = true;
+                    document.getElementById('sunReveal').classList.add('show');
+                } else alert('图案位置不正确，请继续旋转。\n提示：圆形不动，三角形转2次，正方形转3次。');
+            });
+            drawSun();
+
+            // 月之语色块点击
+            let moonSlots = [null, null, null];
+            let selectedColor = null;
+            function resetMoonColorPuzzle() {
+                moonSlots = [null,null,null];
+                document.querySelectorAll('#moonHero .drop-slot').forEach(s => { s.classList.remove('filled'); s.textContent='拖至此处'; });
+                document.querySelectorAll('#moonHero .color-chip').forEach(c => c.classList.remove('selected'));
+                selectedColor = null;
+                document.getElementById('moonReveal').classList.remove('show');
+            }
+            document.querySelectorAll('#moonHero .color-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    document.querySelectorAll('#moonHero .color-chip').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedColor = this.getAttribute('data-color');
+                });
+            });
+            document.querySelectorAll('#moonHero .drop-slot').forEach(slot => {
+                slot.addEventListener('click', function() {
+                    if (!selectedColor) return;
+                    const idx = parseInt(this.getAttribute('data-slot'));
+                    if (moonSlots[idx]) {
+                        const prev = document.querySelector(`#moonHero .color-chip[data-color="${moonSlots[idx]}"]`);
+                        if (prev) prev.style.display = '';
+                    }
+                    moonSlots[idx] = selectedColor;
+                    this.textContent = selectedColor;
+                    this.classList.add('filled');
+                    const used = document.querySelector(`#moonHero .color-chip[data-color="${selectedColor}"]`);
+                    if (used) used.style.display = 'none';
+                    document.querySelectorAll('#moonHero .color-chip').forEach(c => c.classList.remove('selected'));
+                    selectedColor = null;
+                });
+                slot.addEventListener('dblclick', function() {
+                    const idx = parseInt(this.getAttribute('data-slot'));
+                    if (moonSlots[idx]) {
+                        const prev = document.querySelector(`#moonHero .color-chip[data-color="${moonSlots[idx]}"]`);
+                        if (prev) prev.style.display = '';
+                        moonSlots[idx] = null;
+                        this.textContent = '拖至此处';
+                        this.classList.remove('filled');
+                    }
+                });
+            });
+            document.getElementById('moonCheckBtn').addEventListener('click', () => {
+                if (moonSlots[0] === '紫' && moonSlots[1] === '橙' && moonSlots[2] === '绿') {
+                    sessionSolved.detailMoon = true;
+                    document.getElementById('moonReveal').classList.add('show');
+                } else alert('颜色排列不正确，目标：紫 橙 绿');
+            });
+
+            // 双重礼遇
+            function setupOffer(id) {
+                const card = document.getElementById(id);
+                let revealed = false;
+                card.addEventListener('wheel', e => {
+                    if (!revealed && e.deltaY > 20) { card.classList.add('revealed'); revealed = true; }
+                    else if (revealed && e.deltaY < -20) { card.classList.remove('revealed'); revealed = false; }
+                });
+                card.addEventListener('click', e => {
+                    if (revealed && e.target.closest('.offer-text-hidden')) { card.classList.remove('revealed'); revealed = false; }
+                });
+            }
+            setupOffer('offerCard1');
+            setupOffer('offerCard2');
+
+            // 探索卡片顺序 → page3.html
+            const exploreCards = document.querySelectorAll('#exploreCards .explore-card');
+            const orderNames = ['日之语', '月之语', '风之语', '地之语'];
+            let clickOrder = [];
+            const detailMap = { '风之语': 'detailWind', '月之语': 'detailMoon', '日之语': 'detailSun', '地之语': 'detailEarth' };
+            exploreCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const name = this.getAttribute('data-name');
+                    clickOrder.push(name);
+                    if (clickOrder.length > 4) clickOrder.shift();
+                    if (clickOrder.length === 4 && clickOrder.every((n,i) => n === orderNames[i])) {
+                        clickOrder = [];
+                        window.location.href = 'page3.html';
+                        return;
+                    }
+                    if (clickOrder.length === 4 && !clickOrder.every((n,i) => n === orderNames[i])) {
+                        clickOrder = [name];
+                    }
+                    const detailId = detailMap[name];
+                    if (detailId) openDetail(detailId);
+                });
+            });
+
+            // 客服聊天逻辑
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const chatSendBtn = document.getElementById('chatSendBtn');
+            const chatContainer = document.getElementById('chatContainer');
+            const helpLetter = document.getElementById('helpLetter');
+
+            function addMessage(text, type) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `message ${type}`;
+                msgDiv.textContent = text;
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function handleSend() {
+                const rawText = chatInput.value.trim();
+                if (!rawText) return;
+                addMessage(rawText, 'sent');
+                chatInput.value = '';
+                const lowerText = rawText.toLowerCase();
+                if (lowerText === 'hilfe') {
+                    // 切换为全屏求助信
+                    chatContainer.classList.add('hidden');
+                    helpLetter.classList.remove('hidden');
+                } else {
+                    setTimeout(() => {
+                        addMessage('已收到您的消息，客服正在处理中...', 'received');
+                    }, 500);
+                }
+            }
+
+            chatSendBtn.addEventListener('click', handleSend);
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSend();
+                }
+            });
+
+            // 跳转page4按钮
+            document.getElementById('goPage4Btn').addEventListener('click', () => {
+                window.location.href = 'page4.html';
+            });
+
+            const floatingBtn = document.getElementById('floatingBtn');
+            const picModal = document.getElementById('picModal');
+            const picModalClose = document.getElementById('picModalClose');
+            floatingBtn.addEventListener('click', () => picModal.classList.add('active'));
+            picModalClose.addEventListener('click', () => picModal.classList.remove('active'));
+            picModal.addEventListener('click', function(e) { if (e.target === picModal) picModal.classList.remove('active'); });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    closeModal(loginModal); closeModal(cartModal);
+                    document.getElementById('page2Overlay').classList.remove('active');
+                    document.body.style.overflow = '';
+                    if (activeDetailId) closeDetail(activeDetailId);
+                    toggleNav(false);
+                    picModal.classList.remove('active');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

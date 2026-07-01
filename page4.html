@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圣克里斯托弗郊野教堂</title>
+    <style>
+        :root {
+            --bg: #f5f0e8;
+            --text: #3a3226;
+            --gold: #8b6914;
+            --dark: #2c2416;
+            --stone: #d4c5a9;
+            --accent: #6b3a2e;
+            --nav-bg: #1e1810;
+            --card-bg: #faf7f2;
+            --border: #c4b89e;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            --serif: 'Georgia', 'Times New Roman', 'STSong', 'Songti SC', 'SimSun', serif;
+            --sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--nav-bg);
+            color: #e0d5c0;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            height: 56px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+            gap: 16px;
+        }
+        .navbar .hamburger {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 6px 4px;
+            z-index: 1001;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            flex-shrink: 0;
+        }
+        .navbar .hamburger span {
+            display: block;
+            width: 26px;
+            height: 3px;
+            background: #d4c5a9;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+        .navbar .hamburger.open span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        .navbar .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+        .navbar .hamburger.open span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+        .navbar .title {
+            font-family: var(--serif);
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            color: #e8dcc8;
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+        }
+        @media (max-width: 500px) {
+            .navbar .title {
+                font-size: 1rem;
+                letter-spacing: 1px;
+            }
+            .navbar {
+                padding: 0 10px;
+                gap: 8px;
+            }
+        }
+
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .nav-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 270px;
+            height: 100%;
+            background: #1e1810;
+            z-index: 1000;
+            padding: 80px 24px 30px;
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+        }
+        .nav-drawer.active {
+            left: 0;
+        }
+        .nav-drawer a {
+            color: #d4c5a9;
+            text-decoration: none;
+            font-family: var(--serif);
+            font-size: 1.15rem;
+            letter-spacing: 2px;
+            padding: 14px 18px;
+            border-radius: 4px;
+            transition: all 0.25s;
+            display: block;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+        .nav-drawer a:hover,
+        .nav-drawer a.active-link {
+            background: rgba(139, 105, 20, 0.2);
+            border-left-color: var(--gold);
+            color: #f0e6d2;
+        }
+
+        .video-wrapper {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            line-height: 0;
+            background: #000;
+        }
+        .video-wrapper video {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+            max-height: 65vh;
+            background: #000;
+        }
+
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+        .section {
+            margin-bottom: 40px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 30px 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .section h2 {
+            font-family: var(--serif);
+            font-size: 1.6rem;
+            color: var(--accent);
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #d4c5a9;
+            padding-bottom: 10px;
+        }
+        .section h3 {
+            font-family: var(--serif);
+            color: #5a3e28;
+            margin: 12px 0 8px;
+            font-size: 1.1rem;
+        }
+        .section p {
+            margin-bottom: 10px;
+            text-align: justify;
+        }
+        .section ul {
+            list-style: disc;
+            padding-left: 24px;
+            margin: 8px 0;
+        }
+        .section ul li {
+            margin-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 0.95rem;
+        }
+        table th,
+        table td {
+            padding: 8px 12px;
+            border: 1px solid #d4c5a9;
+            text-align: left;
+        }
+        table th {
+            background: #ede4d3;
+            font-weight: bold;
+            color: #5a3e28;
+        }
+        .highlight-bold {
+            font-weight: bold;
+        }
+
+        .search-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            text-align: center;
+        }
+        .search-container h2 {
+            font-family: var(--serif);
+            color: var(--accent);
+            letter-spacing: 3px;
+            margin-bottom: 24px;
+            font-size: 1.8rem;
+        }
+        .search-box {
+            display: flex;
+            gap: 8px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #c4b89e;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: var(--sans);
+            background: #fdfbf6;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .search-box input:focus {
+            border-color: var(--gold);
+        }
+        .search-box button {
+            padding: 12px 24px;
+            background: var(--accent);
+            color: #f0e6d2;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--serif);
+            letter-spacing: 1px;
+            font-size: 1rem;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+        .search-box button:hover {
+            background: #8b4a3a;
+        }
+        .search-hint {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        .search-results {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .result-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .result-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            border-color: var(--gold);
+            transform: translateY(-1px);
+        }
+        .result-card .icon-folder {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .result-card .info {
+            flex: 1;
+        }
+        .result-card .info .rtitle {
+            font-family: var(--serif);
+            font-weight: bold;
+            color: #5a3e28;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+        }
+        .result-card .info .rdesc {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 2px;
+        }
+        .no-result {
+            text-align: center;
+            padding: 30px;
+            color: #8b6914;
+            font-family: var(--serif);
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+        }
+
+        .content-page {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .content-page .back-btn {
+            display: inline-block;
+            padding: 10px 18px;
+            background: #e8dcc8;
+            color: #5a3e28;
+            border: 1px solid #c4b89e;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--serif);
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            transition: all 0.25s;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+        .content-page .back-btn:hover {
+            background: #d4c5a9;
+            color: #2c2416;
+        }
+        .content-page .detail-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 28px 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        .content-page .detail-section h2 {
+            font-family: var(--serif);
+            color: var(--accent);
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            font-size: 1.5rem;
+        }
+        .content-page .detail-section h3 {
+            font-family: var(--serif);
+            color: #5a3e28;
+            margin: 14px 0 8px;
+            font-size: 1.15rem;
+        }
+        .content-page .detail-section p {
+            margin-bottom: 8px;
+            text-align: justify;
+        }
+        .content-page .detail-section ul {
+            list-style: disc;
+            padding-left: 24px;
+            margin: 8px 0;
+        }
+        .content-page .detail-section ul li {
+            margin-bottom: 4px;
+        }
+
+        .annal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .annal-card {
+            background: #fdfbf6;
+            border: 1px solid #d4c5a9;
+            border-radius: 6px;
+            padding: 14px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.25s;
+            font-family: var(--serif);
+            letter-spacing: 1px;
+        }
+        .annal-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+        .annal-card .year-range {
+            font-weight: bold;
+            color: #5a3e28;
+            font-size: 1rem;
+        }
+
+        .dark-gold-page {
+            background: #0a0a0a;
+            color: #c9a84c;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            font-family: var(--serif);
+        }
+        .dark-gold-page .gold-text {
+            font-size: 1.4rem;
+            letter-spacing: 4px;
+            line-height: 2.4;
+            animation: fadeGlow 2s ease-in-out infinite alternate;
+        }
+        @keyframes fadeGlow {
+            0% {
+                text-shadow: 0 0 8px #c9a84c44;
+            }
+            100% {
+                text-shadow: 0 0 20px #c9a84c99, 0 0 40px #c9a84c44;
+            }
+        }
+        .dark-gold-page .btn-gold {
+            margin-top: 30px;
+            padding: 14px 32px;
+            background: transparent;
+            border: 2px solid #c9a84c;
+            color: #c9a84c;
+            font-family: var(--serif);
+            letter-spacing: 3px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.4s;
+            text-decoration: none;
+        }
+        .dark-gold-page .btn-gold:hover {
+            background: #c9a84c;
+            color: #0a0a0a;
+            box-shadow: 0 0 30px #c9a84c66;
+        }
+        .dark-gold-page .back-btn-dark {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid #c9a84c66;
+            color: #c9a84c;
+            font-family: var(--serif);
+            cursor: pointer;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .dark-gold-page .back-btn-dark:hover {
+            border-color: #c9a84c;
+            background: #c9a84c22;
+        }
+
+        .footer {
+            background: #000;
+            color: #fff;
+            padding: 30px 20px 20px;
+            text-align: center;
+            font-family: var(--sans);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            line-height: 2;
+        }
+        .footer .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        .footer .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        .footer .footer-links a:hover {
+            opacity: 0.7;
+            text-decoration: underline;
+        }
+        .footer .copyright {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .section {
+                padding: 18px 14px;
+            }
+            .section h2 {
+                font-size: 1.3rem;
+            }
+            .search-box {
+                flex-direction: column;
+            }
+            .search-box button {
+                width: 100%;
+            }
+            .annal-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 8px;
+            }
+            .content-page {
+                padding: 10px;
+            }
+            .content-page .detail-section {
+                padding: 16px 12px;
+            }
+            .footer .footer-links {
+                gap: 12px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="hamburger" id="hamburger" onclick="toggleNav()" aria-label="菜单">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <span class="title">圣克里斯托弗郊野教堂</span>
+    </nav>
+
+    <div class="nav-overlay" id="navOverlay" onclick="closeNav()"></div>
+    <div class="nav-drawer" id="navDrawer">
+        <a onclick="goHome()" id="navHome">⛪ 首页</a>
+        <a onclick="goDigitalLibrary()" id="navLibrary">📚 数字藏书</a>
+    </div>
+
+    <div class="video-wrapper">
+        <video src="video2.mp4" autoplay muted loop playsinline>
+            您的浏览器不支持视频播放。
+        </video>
+    </div>
+
+    <div id="appRoot">
+        <div id="homePage" class="main-content">
+            <div class="section" id="sec-intro">
+                <h2>简介</h2>
+                <p>圣克里斯托弗郊野教堂位于法兰克福近郊高坡，始建于1505年，1512年祝圣，奉圣克里斯托弗为主保。16世纪宗教改革期间，堂区成为法兰克福周边最早确立路德宗身份的郊区教堂之一。此后屡经三十年战争、教产更迭的冲击，信众始终坚守信仰。</p>
+                <p>教堂以浅色砂岩砌筑，古塔耸立至今。内部融合晚期哥特骨架、19世纪新哥特彩窗与战后现代风格，层层叠印五个世纪的痕迹。历史上它曾充当野战医院、马厩与避难所；1944年遭空袭坍塌，唯塔楼挺立，1950年重建新中殿。</p>
+                <p>如今，圣克里斯托弗教堂仍是活跃的信仰中心，钟声、颂歌与日常祈祷在这片郊野延续，见证了五百余年不间断的恩典与盼望。</p>
+            </div>
+
+            <div class="section" id="sec-library">
+                <h2>藏书介绍</h2>
+                <p>圣克里斯托弗郊野教堂的图书室，是法兰克福周边最令人意外的乡村藏书之所。经过五个多世纪的积累，这里庋藏了逾三千册古籍与抄本，内容涵盖神学、哲学、自然哲学、天文学与早期医学，语种包括拉丁文、德语、法语与少量希伯来文。</p>
+                <p>藏书中最为珍贵者，当属16世纪路德宗改革初期的一批初版文献，包括1522年的"九月圣经"残卷、数种路德讲道集原版，以及1577年《协同书》签署时期的礼仪手稿。17世纪留存的数部皮面手抄本，以工整的拉丁草书写就，内容涉及雅各·波墨的神智学沉思与帕拉塞尔苏斯学派的医学见解，页边偶见以墨水绘制的几何符号与星图，显系精研自然奥秘者所留。18世纪的藏品则偏重启蒙时代的理性探求，架上可见克里斯蒂安·沃尔夫的哲学论著与当时法兰克福书展上购得的博物学图册。</p>
+                <p>这批藏书曾在三十年战争中被紧急装箱掩埋于椴树根下，1944年大空袭前又由牧师提前转移至地窖，两次躲过灭顶之灾。2018年全部档案实现数字化，学者可在线查阅。但对于那些带有页边秘符和残蜡痕迹的古老抄本而言，或许唯有亲手翻阅，才能感受到它们承载的漫长追寻与沉默的虔诚。</p>
+            </div>
+
+            <div class="section" id="sec-schedule">
+                <h2>开放时间与弥撒公告</h2>
+                <h3>教堂开放时间</h3>
+                <table>
+                    <tr><th>时段</th><th>时间</th></tr>
+                    <tr><td>周一至周六</td><td>9:00 — 18:00</td></tr>
+                    <tr><td>主日及节庆日</td><td>8:00 — 19:00</td></tr>
+                </table>
+                <ul>
+                    <li>教堂在弥撒进行期间仅供参礼，谢绝游客参观。</li>
+                    <li>地下室古迹展厅开放时间为周三至周日 10:00 — 16:00，免费入场。</li>
+                    <li>图书室需提前预约查阅，请联系堂区办公室。</li>
+                </ul>
+
+                <h3>主日弥撒</h3>
+                <table>
+                    <tr><th>场次</th><th>时间</th></tr>
+                    <tr><td>早堂主日崇拜（传统礼仪）</td><td>主日 8:30</td></tr>
+                    <tr><td>主日大礼弥撒（唱诗班献唱）</td><td>主日 10:30</td></tr>
+                    <tr><td>晚间默祷与泰泽短颂</td><td>主日 18:00</td></tr>
+                </table>
+
+                <h3>平日弥撒</h3>
+                <table>
+                    <tr><th>日期</th><th>时间</th></tr>
+                    <tr><td>周二与周四晨间弥撒</td><td>7:30</td></tr>
+                    <tr><td>周三晚祷与圣经研读</td><td>19:00</td></tr>
+                    <tr><td>周五午后静默祈祷</td><td>12:00</td></tr>
+                </table>
+                <ul>
+                    <li>每月首个周六 17:00 为家庭弥撒，欢迎儿童参与。</li>
+                    <li>主保日（7月25日）及圣诞、复活节弥撒时间另行公告。</li>
+                </ul>
+            </div>
+
+            <div class="section" id="sec-bulletin">
+                <h2>公告栏</h2>
+                <ul>
+                    <li>1月1日 — 新年感恩大礼弥撒</li>
+                    <li>2月18日 — 圣灰星期三礼仪与大斋期开始</li>
+                    <li>4月2–5日 — 逾越节三日庆典与复活节守夜礼</li>
+                    <li><strong>5月14日 — 庆祝教堂重建160周年</strong></li>
+                    <li>5月24日 — 五旬节圣灵降临日多语种读经</li>
+                    <li>6月4日 — 基督圣体圣血节田野圣体游行</li>
+                    <li>6月21日 — 塔楼钟琴夏季首场演奏会</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="digitalLibraryPage" style="display:none;">
+            <div class="search-container" id="searchArea">
+                <h2>📚 数字藏书</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="请输入关键词搜索..." onkeydown="if(event.key==='Enter')doSearch();">
+                    <button onclick="doSearch()">🔍 搜索</button>
+                </div>
+                <div class="search-hint">提示：搜索人名时，中间的点用英文句号.</div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            <div class="content-page" id="contentDetailPage" style="display:none;"></div>
+            <div class="dark-gold-page" id="darkGoldPage" style="display:none; position:relative;">
+                <button class="back-btn-dark" onclick="goDigitalLibrary()">← 返回数字藏书</button>
+                <div class="gold-text">
+                    回到起点去<br>那里藏着真相<br>翠玉录饱含真理<br>顺序是通往前方的钥匙
+                </div>
+                <button class="btn-gold" onclick="window.location.href='page1.html'">回到起点</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">网站地图</a>
+            <a href="#">相关链接</a>
+            <a href="#">影像授权</a>
+            <a href="#">隐私政策</a>
+            <a href="#">版权声明</a>
+            <a href="#">关于我们</a>
+            <a href="#">联系我们</a>
+        </div>
+        <div class="copyright">
+            ©爆炒霸王龙🦖制作<br>内容均为虚构，仅供解谜体验
+        </div>
+    </footer>
+
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navDrawer = document.getElementById('navDrawer');
+        const navOverlay = document.getElementById('navOverlay');
+        const navHome = document.getElementById('navHome');
+        const navLibrary = document.getElementById('navLibrary');
+
+        function toggleNav() {
+            if (navDrawer.classList.contains('active')) {
+                closeNav();
+            } else {
+                openNav();
+            }
+        }
+
+        function openNav() {
+            navDrawer.classList.add('active');
+            navOverlay.classList.add('active');
+            hamburger.classList.add('open');
+        }
+
+        function closeNav() {
+            navDrawer.classList.remove('active');
+            navOverlay.classList.remove('active');
+            hamburger.classList.remove('open');
+        }
+
+        function goHome() {
+            closeNav();
+            document.getElementById('homePage').style.display = 'block';
+            document.getElementById('digitalLibraryPage').style.display = 'none';
+            document.getElementById('searchArea').style.display = 'block';
+            document.getElementById('contentDetailPage').style.display = 'none';
+            document.getElementById('darkGoldPage').style.display = 'none';
+            searchState = { keyword: '', html: '' };
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('searchInput').value = '';
+            navHome.classList.add('active-link');
+            navLibrary.classList.remove('active-link');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goDigitalLibrary() {
+            closeNav();
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('digitalLibraryPage').style.display = 'block';
+            document.getElementById('searchArea').style.display = 'block';
+            document.getElementById('contentDetailPage').style.display = 'none';
+            document.getElementById('darkGoldPage').style.display = 'none';
+            searchState = { keyword: '', html: '' };
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('searchInput').value = '';
+            navLibrary.classList.add('active-link');
+            navHome.classList.remove('active-link');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        navHome.classList.add('active-link');
+
+        let searchState = { keyword: '', html: '' };
+
+        const keywordDB = {
+            '赫尔.贝茨': 'herlBates',
+            '年鉴': 'annals',
+            '蔷薇十字会': 'rosicrucian',
+            '精神炼金术': 'spiritualAlchemy',
+            '1866': 'annal1866',
+            '1866年': 'annal1866'
+        };
+
+        function doSearch() {
+            const input = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('searchResults');
+            const contentDetail = document.getElementById('contentDetailPage');
+            const darkGoldPage = document.getElementById('darkGoldPage');
+            const searchArea = document.getElementById('searchArea');
+
+            contentDetail.style.display = 'none';
+            darkGoldPage.style.display = 'none';
+            searchArea.style.display = 'block';
+            resultsDiv.innerHTML = '';
+
+            if (!input) {
+                resultsDiv.innerHTML = '<div class="no-result">请输入关键词进行搜索</div>';
+                searchState = { keyword: '', html: '' };
+                return;
+            }
+
+            let matchedKey = null;
+            for (const key of Object.keys(keywordDB)) {
+                if (input === key || input.toLowerCase() === key.toLowerCase()) {
+                    matchedKey = key;
+                    break;
+                }
+            }
+
+            if (!matchedKey) {
+                resultsDiv.innerHTML = '<div class="no-result">搜索不到数据</div>';
+                searchState = { keyword: input, html: resultsDiv.innerHTML };
+                return;
+            }
+
+            const pageType = keywordDB[matchedKey];
+
+            if (pageType === 'spiritualAlchemy') {
+                searchArea.style.display = 'none';
+                darkGoldPage.style.display = 'flex';
+                searchState = { keyword: input, html: '' };
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+
+            if (pageType === 'annals') {
+                const annalSections = [
+                    { range: '1500年 — 1549年', id: 'annal-1500-1549' },
+                    { range: '1550年 — 1599年', id: 'annal-1550-1599' },
+                    { range: '1600年 — 1649年', id: 'annal-1600-1649' },
+                    { range: '1650年 — 1699年', id: 'annal-1650-1699' },
+                    { range: '1700年 — 1749年', id: 'annal-1700-1749' },
+                    { range: '1750年 — 1799年', id: 'annal-1750-1799' },
+                    { range: '1800年 — 1849年', id: 'annal-1800-1849' },
+                    { range: '1850年 — 1899年', id: 'annal-1850-1899' },
+                    { range: '1900年 — 1949年', id: 'annal-1900-1949' },
+                    { range: '1950年 — 1999年', id: 'annal-1950-1999' }
+                ];
+                let html = '<h3 style="font-family:var(--serif);color:#5a3e28;letter-spacing:2px;margin-bottom:12px;">📖 教堂年鉴 — 共10卷</h3>';
+                html += '<div class="annal-grid">';
+                annalSections.forEach(s => {
+                    html += `<div class="annal-card" onclick="showAnnalContent('${s.id}')"><span class="year-range">${s.range}</span><br><small>教堂年鉴</small></div>`;
+                });
+                html += '</div>';
+                resultsDiv.innerHTML = html;
+                searchState = { keyword: input, html: html };
+                window.scrollTo({ top: resultsDiv.offsetTop - 80, behavior: 'smooth' });
+                return;
+            }
+
+            if (pageType === 'annal1866') {
+                const html = `
+                <div class="result-card" onclick="showAnnalContent('annal-1850-1899')">
+                    <span class="icon-folder">📖</span>
+                    <div class="info">
+                        <div class="rtitle">1850年——1899年 教堂年鉴</div>
+                        <div class="rdesc">包含1866年教会与神父赫尔.贝茨重要记录</div>
+                    </div>
+                </div>`;
+                resultsDiv.innerHTML = html;
+                searchState = { keyword: input, html: html };
+                window.scrollTo({ top: resultsDiv.offsetTop - 80, behavior: 'smooth' });
+                return;
+            }
+
+            if (pageType === 'herlBates') {
+                const html = `
+                <div class="result-card" onclick="showDetailPage('herlBates')">
+                    <span class="icon-folder">📄</span>
+                    <div class="info">
+                        <div class="rtitle">赫尔·贝茨神父手稿</div>
+                        <div class="rdesc">前任神父赫尔·贝茨遗留的手稿整理文件</div>
+                    </div>
+                </div>
+                <div class="result-card" onclick="showDeathReport()">
+                    <span class="icon-folder">📋</span>
+                    <div class="info">
+                        <div class="rtitle">神父赫尔.贝茨死亡报告</div>
+                        <div class="rdesc">1866年赫尔.贝茨神父意外死亡记录</div>
+                    </div>
+                </div>`;
+                resultsDiv.innerHTML = html;
+                searchState = { keyword: input, html: html };
+                window.scrollTo({ top: resultsDiv.offsetTop - 80, behavior: 'smooth' });
+                return;
+            }
+
+            let cardTitle = '';
+            let cardDesc = '';
+            if (pageType === 'rosicrucian') {
+                cardTitle = '蔷薇十字会资料';
+                cardDesc = '蔷薇十字会（玫瑰十字会）神秘学传统与历史资料';
+            }
+
+            const resultHtml = `
+            <div class="result-card" onclick="showDetailPage('${pageType}')">
+                <span class="icon-folder">📄</span>
+                <div class="info">
+                    <div class="rtitle">${cardTitle}</div>
+                    <div class="rdesc">${cardDesc}</div>
+                </div>
+            </div>`;
+            resultsDiv.innerHTML = resultHtml;
+            searchState = { keyword: input, html: resultHtml };
+            window.scrollTo({ top: resultsDiv.offsetTop - 80, behavior: 'smooth' });
+        }
+
+        function showDetailPage(pageType) {
+            const searchArea = document.getElementById('searchArea');
+            const contentDetail = document.getElementById('contentDetailPage');
+            const darkGoldPage = document.getElementById('darkGoldPage');
+            searchArea.style.display = 'none';
+            darkGoldPage.style.display = 'none';
+            contentDetail.style.display = 'block';
+            contentDetail.innerHTML = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (pageType === 'herlBates') {
+                contentDetail.innerHTML = getHerlBatesHTML();
+            } else if (pageType === 'rosicrucian') {
+                contentDetail.innerHTML = getRosicrucianHTML();
+            }
+        }
+
+        function showAnnalContent(annalId) {
+            const searchArea = document.getElementById('searchArea');
+            const contentDetail = document.getElementById('contentDetailPage');
+            const darkGoldPage = document.getElementById('darkGoldPage');
+            searchArea.style.display = 'none';
+            darkGoldPage.style.display = 'none';
+            contentDetail.style.display = 'block';
+            contentDetail.innerHTML = getAnnalHTML(annalId);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showDeathReport() {
+            const searchArea = document.getElementById('searchArea');
+            const contentDetail = document.getElementById('contentDetailPage');
+            const darkGoldPage = document.getElementById('darkGoldPage');
+            searchArea.style.display = 'none';
+            darkGoldPage.style.display = 'none';
+            contentDetail.style.display = 'block';
+            contentDetail.innerHTML = getDeathReportHTML();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function backToSearch() {
+            const searchArea = document.getElementById('searchArea');
+            const contentDetail = document.getElementById('contentDetailPage');
+            const darkGoldPage = document.getElementById('darkGoldPage');
+            contentDetail.style.display = 'none';
+            darkGoldPage.style.display = 'none';
+            searchArea.style.display = 'block';
+            document.getElementById('searchInput').value = searchState.keyword || '';
+            document.getElementById('searchResults').innerHTML = searchState.html || '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getHerlBatesHTML() {
+            return `
+            <button class="back-btn" onclick="backToSearch()">← 返回数字藏书</button>
+            <div class="detail-section">
+                <h2>神父手稿</h2>
+                <p>我们在教堂各处，收集到了前任神父赫尔·贝茨遗留的手稿，按照猜测的顺序，整理出了这份文件，供大家查阅。</p>
+                <h3>01</h3>
+                <p>距离我读到那些文字已经过去一个星期了，但是那种难以言说的感觉不减反增。海伦叫我烧掉那些东西，但是我没有，未知才是恐惧的源头，我必须查清楚真相。</p>
+                <h3>02</h3>
+                <p>当初发现那些记录的区域我翻遍了，但是一无所获。之前的感觉还在，时间久了我发现那是一种被注视感，但是找不到注视的源头。我得加快速度了，莱恩前两天刚过来就发现我气色不好，我说是没休息好。但这也是实话，最近睡觉时总是听到窸窸窣窣的声音，一打算仔细听又听不见了，可能是附近的小孩来空地上玩发出的声音吧。</p>
+                <h3>03</h3>
+                <p>今天有了重大突破，我翻阅了教堂的<strong>年鉴</strong>，这里在17世纪中期，曾经是某个密教团体的集会地点之一，难道那些记录是出自他们之手？我得去找找有关这个团体的资料。最近精神越来越差了，那些声音还在，像是有什么在我耳边低语，不过我听不清其中的内容。</p>
+                <h3>04</h3>
+                <p>我知道了！哈哈哈哈哈哈哈！！我听清他们在说什么了！！！注视的源头，不对，不对！！那是光，哈哈哈哈哈哈，我看到光了！！！！！</p>
+                <p style="color:#999;font-style:italic;">后边的手稿内容是很多混乱的符号，编者也难以辨认。</p>
+            </div>`;
+        }
+
+        function getRosicrucianHTML() {
+            return `
+            <button class="back-btn" onclick="backToSearch()">← 返回数字藏书</button>
+            <div class="detail-section">
+                <h2>蔷薇十字会资料</h2>
+                <p>蔷薇十字会（Rosicrucian，又称玫瑰十字会）是西方神秘学史上极具传奇色彩的思想传统与隐秘结社概念，其名称源自核心象征——玫瑰与十字，寓意精神从物质桎梏中觉醒、绽放。</p>
+                <p>从传说维度，该组织被认为由德国神秘学者克里斯蒂安·罗森克鲁兹（Christian Rosenkreuz）创立：相传他游历中东、北非，习得古埃及神秘学、阿拉伯炼金术与卡巴拉智慧，返回欧洲后集结同道建立秘密兄弟会，以探索宇宙真理、实现精神净化与社会革新为目标，其中<strong>精神炼金术</strong>最为著名。</p>
+                <p>史学界普遍认为，蔷薇十字会真正进入公众视野是1614—1616年间，三本匿名典籍《兄弟会传说》（Fama Fraternitatis）、《兄弟会信条》（Confessio Fraternitatis）与《克里斯蒂安·罗森克鲁兹的化学婚礼》在德国陆续出版，宣告了这一"隐秘兄弟会"的存在，掀起席卷欧洲的蔷薇十字运动。其核心主张融合赫尔墨斯主义、基督教神秘主义、卡巴拉与炼金术传统，不追求世俗权力与炼金造金，而是以炼金隐喻精神的转化与升华，倡导通过隐秘知识实现人类智识与道德的整体改革。</p>
+                <p>该传统深刻影响了后世黄金黎明、共济会高阶体系等诸多神秘学组织，19世纪后衍生出多个以"蔷薇十字"为名的现实社团，延续其神秘学研修与精神探索的内核，至今仍是西方秘传传统中最具代表性的符号之一。</p>
+            </div>`;
+        }
+
+        function getDeathReportHTML() {
+            return `
+            <button class="back-btn" onclick="backToSearch()">← 返回数字藏书</button>
+            <div class="detail-section">
+                <h2>神父赫尔.贝茨死亡报告</h2>
+                <table style="width:100%; border-collapse: collapse; margin: 16px 0;">
+                    <tr><td style="font-weight:bold; border:1px solid #ccc; padding:10px; background:#f2f2f2;">姓名</td><td style="border:1px solid #ccc; padding:10px;">赫尔.贝茨</td></tr>
+                    <tr><td style="font-weight:bold; border:1px solid #ccc; padding:10px; background:#f2f2f2;">年龄</td><td style="border:1px solid #ccc; padding:10px;">49</td></tr>
+                    <tr><td style="font-weight:bold; border:1px solid #ccc; padding:10px; background:#f2f2f2;">死亡时间</td><td style="border:1px solid #ccc; padding:10px;">1866-06-05</td></tr>
+                    <tr><td style="font-weight:bold; border:1px solid #ccc; padding:10px; background:#f2f2f2;">死亡地点</td><td style="border:1px solid #ccc; padding:10px;">教堂地下储藏室内</td></tr>
+                    <tr><td style="font-weight:bold; border:1px solid #ccc; padding:10px; background:#f2f2f2;">死亡原因</td><td style="border:1px solid #ccc; padding:10px;">不明</td></tr>
+                </table>
+                <div style="border:1px solid #ccc; padding:20px; background:#f9f9f9; margin-top:20px; border-radius:6px;">
+                    <strong>详细情况：</strong><br>
+                    尸体呈现极其干瘪的状态难以判断死亡时间，多处疑似某种锐器捅破的伤口，但并非致命伤，地面上有明显的拖拽痕迹，房间内有剧烈咸腥，腐朽气味并非来自尸体。
+                </div>
+            </div>`;
+        }
+
+        function getAnnalHTML(annalId) {
+            const annalData = {
+                'annal-1500-1549': {
+                    title: '1500年 — 1549年 教堂年鉴',
+                    content: `<p>起自救主降生1500年，由历任堂区司铎与执事接力编纂</p>
+<p><strong>1500:</strong> 此地仍属圣雅各修道院远郊产业，种植葡萄与黑麦。</p>
+<p><strong>1501:</strong> 附近村落信徒联名请求自建小堂，免于跋涉至城内礼拜。</p>
+<p><strong>1502:</strong> 法兰克福商人马丁·赫希捐出高坡地块及200古尔登。</p>
+<p><strong>1503:</strong> 市议会批准新建一座供奉圣克里斯托弗的郊区教堂。</p>
+<p><strong>1504:</strong> 石材与木料陆续运至，美因茨建筑师约翰·冯·施派尔测绘。</p>
+<p><strong>1505:</strong> 5月3日十字架发现节奠基，辅理主教祝圣基石。</p>
+<p><strong>1506:</strong> 墙体砌至三尺，秋雨连绵致地基积水，工程暂停。</p>
+<p><strong>1507:</strong> 春季复工，圣坛拱顶合龙。</p>
+<p><strong>1508:</strong> 主体结构完工，圣克里斯托弗瞻礼举行首台弥撒。</p>
+<p><strong>1509:</strong> 钟楼开工，获赠"克里斯托弗""玛利亚""安娜"三口钟。</p>
+<p><strong>1510:</strong> 钟楼尖顶树立，大钟悬挂，重约800磅。</p>
+<p><strong>1511:</strong> 屋架铺设，安放首批彩绘玻璃。</p>
+<p><strong>1512:</strong> 7月25日隆重祝圣，定为堂区主保日。</p>
+<p><strong>1513:</strong> 首部弥撒经书与圣爵到位，法兰克福议会馈赠礼仪书。</p>
+<p><strong>1514:</strong> 划定堂区墓地，墓园中央栽下一株椴树。</p>
+<p><strong>1515:</strong> 洗礼册启用，第一位受洗者为安娜·贝克，生于1月7日。</p>
+<p><strong>1516:</strong> 仲夏大旱，村民抬圣像巡游祈雨，夜间忽降甘霖，传为奇迹。</p>
+<p><strong>1517:</strong> 路德在维滕贝格张贴论纲的消息于深秋传入村中。</p>
+<p><strong>1518:</strong> 司铎康拉德·法贝尔对赎罪券售卖渐持批评态度。</p>
+<p><strong>1519:</strong> 增建圣塞巴斯蒂安侧祭坛，意在祈免瘟疫。</p>
+<p><strong>1520:</strong> 路德著作《教会被掳于巴比伦》在教区私下流传。</p>
+<p><strong>1521:</strong> 沃尔姆斯会议期间教区信众意见分裂，部分信徒进法兰克福声援路德。</p>
+<p><strong>1522:</strong> 堂区出现要求用德语诵读福音书的呼声。</p>
+<p><strong>1523:</strong> 康拉德神父开始在平日弥撒中使用德语讲解圣经。</p>
+<p><strong>1524:</strong> 农民战争波及黑森，墓地被流亡农民短暂扎营，秋毫无犯。</p>
+<p><strong>1525:</strong> 农民军被镇压，教堂为双方亡者举行安魂礼。</p>
+<p><strong>1526:</strong> 黑森方伯改宗，本堂仍处于天主教法兰克福管辖，气氛紧张。</p>
+<p><strong>1527:</strong> 一次未遂的破坏圣像事件发生，圣克里斯托弗雕像右臂被涂污。</p>
+<p><strong>1528:</strong> 执事加固圣体柜，夜间增加值守。</p>
+<p><strong>1529:</strong> 奥斯曼兵临维也纳，全堂举行四十小时代祷。</p>
+<p><strong>1530:</strong> 奥格斯堡信纲传入，堂内就圣餐理解产生激烈争论。</p>
+<p><strong>1531:</strong> 康拉德神父病故，约翰·布伦茨接任，倾向路德宗改革。</p>
+<p><strong>1532:</strong> 因纽伦堡宗教和平，本堂一度并行拉丁弥撒与德语弥撒。</p>
+<p><strong>1533:</strong> 法兰克福正式引入宗教改革，本堂随之成为路德宗教堂。</p>
+<p><strong>1534:</strong> 拉丁弥撒废止，彻底使用德语崇拜仪式。</p>
+<p><strong>1535:</strong> 除管风琴外，多数圣像被取下，壁画以白灰覆盖。</p>
+<p><strong>1536:</strong> 布伦茨牧师成婚，成为首位已婚驻地牧师，引起波澜。</p>
+<p><strong>1537:</strong> 教堂旁开设学校，教授路德小要理问答与赞美诗。</p>
+<p><strong>1538:</strong> 夏秋瘟疫流行，亡32人，皆葬于教堂墓地东区。</p>
+<p><strong>1539:</strong> 瘟疫消退，铸造"祈祷玛利亚"新钟，用于平日晚祷。</p>
+<p><strong>1540:</strong> 加建木结构侧廊，容纳日益增长的信众。</p>
+<p><strong>1541:</strong> 加尔文思想渗入，若干家庭要求简化礼仪，初现裂痕。</p>
+<p><strong>1542:</strong> 因奥格斯堡临时协议，礼仪短暂部分回归传统，信徒困惑。</p>
+<p><strong>1543:</strong> 布伦茨记录："许多已经摒弃的愚昧传统再度抬头。"</p>
+<p><strong>1544:</strong> 施马尔卡尔登战争阴云迫近，教区数名青年应征入伍。</p>
+<p><strong>1545:</strong> 战事导致粮价上涨，教堂在门廊施粥。</p>
+<p><strong>1546:</strong> 路德逝世，教堂鸣钟终日，举行隆重的追思礼拜。</p>
+<p><strong>1547:</strong> 皇帝军队途经法兰克福，本堂被骑兵短暂占用为马厩，门窗受损。</p>
+<p><strong>1548:</strong> 奥格斯堡临时敕令试图恢复天主教仪式，执事们消极应对。</p>
+<p><strong>1549:</strong> 布伦茨拒绝服从敕令遭停职，一名拥护敕令的代理牧师进驻。</p>`
+                },
+                'annal-1550-1599': {
+                    title: '1550年 — 1599年 教堂年鉴',
+                    content: `<p><strong>1550:</strong> 信徒集体请愿，法兰克福议会最终维持路德宗礼仪，代理牧师离去。</p>
+<p><strong>1551:</strong> 被损管风琴全面修复，新增混音音栓。</p>
+<p><strong>1552:</strong> 勃兰登堡-库尔姆巴赫战争，郊区遭散兵劫掠，一对银烛台失窃。</p>
+<p><strong>1553:</strong> 赎买回圣餐银爵，铭刻"不可夺去"。</p>
+<p><strong>1554:</strong> 秩序逐步恢复，设婚礼登记册，严明婚配记录。</p>
+<p><strong>1555:</strong> 奥格斯堡和约确立教随国定，本堂作为路德宗教堂地位永久确定。</p>
+<p><strong>1556:</strong> 布伦茨复职，推行《教会规章》，规范讲道与圣礼。</p>
+<p><strong>1557:</strong> 兴建半木结构牧师住宅，位于墓地南侧。</p>
+<p><strong>1558:</strong> 首次堂区大会召开，选举产生平信徒长老。</p>
+<p><strong>1559:</strong> 墓地向东扩建，加筑石墙。</p>
+<p><strong>1560:</strong> 一名来自卢卡的意大利新教徒流亡至此，捐赠一批拉丁文神学书籍。</p>
+<p><strong>1561:</strong> 春季天花发作，九名幼童夭折，行速葬。</p>
+<p><strong>1562:</strong> 尖顶上安装镀金风向鸡。</p>
+<p><strong>1563:</strong> 《海德堡要理问答》传入，部分信徒改宗归正宗，冲突加剧。</p>
+<p><strong>1564:</strong> 布伦茨全力维系路德宗正统，并撰文驳斥加尔文圣餐观。</p>
+<p><strong>1565:</strong> 法兰克福博览会期间，外国新教商人来此参加礼拜。</p>
+<p><strong>1566:</strong> 塔楼首次安装机械时钟，由纽伦堡工匠汉斯·格洛克制造。</p>
+<p><strong>1567:</strong> 执事汇编首部年度堂务报告。</p>
+<p><strong>1568:</strong> 贵族冯·埃申海姆家族在圣坛南侧购得家族墓穴用地。</p>
+<p><strong>1569:</strong> 冬季极寒，弥撒用葡萄酒在圣爵中结冰，被视为不祥之兆。</p>
+<p><strong>1570:</strong> 屋顶全部更换为红色陶瓦。</p>
+<p><strong>1571:</strong> 法兰克福承认归正宗信仰合法，但本堂仍坚持路德宗立场。</p>
+<p><strong>1572:</strong> 圣巴多罗买日屠杀后，法国胡格诺难民途经此处，获施舍与庇护。</p>
+<p><strong>1573:</strong> 约翰·布伦茨告老，其子小约翰·布伦茨继任牧师。</p>
+<p><strong>1574:</strong> 内部装修，讲道台饰以木雕基督生平连环画。</p>
+<p><strong>1575:</strong> 新铸黄铜洗礼盆，刻路德玫瑰与"让小孩子到我这里来"。</p>
+<p><strong>1576:</strong> 传言鼠疫迫近，教区举行三日禁食忏悔礼拜。</p>
+<p><strong>1577:</strong> 《协同书》签署，本堂在法兰克福教会中率先接纳。</p>
+<p><strong>1578:</strong> 成立男童唱诗班，每周三次排练素歌与众赞歌。</p>
+<p><strong>1579:</strong> 雷暴击中十字架，重修时加高尖顶，增置避雷金属带雏形。</p>
+<p><strong>1580:</strong> 隆重庆祝奥格斯堡信纲颁布五十周年，钟鼓齐鸣。</p>
+<p><strong>1581:</strong> 法兰克福议会规定所有市郊教堂统一采用路德宗修订礼仪。</p>
+<p><strong>1582:</strong> 格里高利历推行，教区记事改用新历，年内日期跳空十日。</p>
+<p><strong>1583:</strong> 堂区法衣室增建完成，用于存放圣器与典籍。</p>
+<p><strong>1584:</strong> 有牧羊人报称墓地上空现火球，小布伦茨记录为"自然之鬼火"。</p>
+<p><strong>1585:</strong> 连续两年谷麦歉收，教会减免部分什一税。</p>
+<p><strong>1586:</strong> 整修地下室时发现古代骨瓮，推测属罗马晚期，重新安葬。</p>
+<p><strong>1587:</strong> 小布伦茨突患热病离世，年仅41岁，马丁·格吕克牧师继任。</p>
+<p><strong>1588:</strong> 格吕克着手整理堂区旧档，编撰本鉴，始成系统。</p>
+<p><strong>1589:</strong> 传言法兰克福将遭围城，村民将细软与圣器藏于祭坛下方。</p>
+<p><strong>1590:</strong> 旧管风琴遭虫蛀严重，决定集资购置新琴。</p>
+<p><strong>1591:</strong> 新管风琴安装完毕，来自法兰克福名匠，音色清亮。</p>
+<p><strong>1592:</strong> 格吕克牧师规定坚振礼须记录在案。</p>
+<p><strong>1593:</strong> 冬季狼群屡次入村伤畜，猎户于教堂前集合祷告，后围猎成功。</p>
+<p><strong>1594:</strong> 漫长严寒致春季洪水，地下室进水，部分早期档案霉坏。</p>
+<p><strong>1595:</strong> 抢救档案，烘干并抄录副本，自此重视保管。</p>
+<p><strong>1596:</strong> 塔楼加装改良风向标与铁质避雷针雏形。</p>
+<p><strong>1597:</strong> 三十年战争前兆显现，人们聚集为和平祈祷。</p>
+<p><strong>1598:</strong> 格吕克牧师安息，约翰·腓特烈·雷曼就任。</p>
+<p><strong>1599:</strong> 世纪末感恩礼拜，座无虚席，为新世纪祈求平安。</p>`
+                },
+                'annal-1600-1649': {
+                    title: '1600年 — 1649年 教堂年鉴',
+                    content: `<p><strong>1600:</strong> 世纪交替，鸣钟千响，堂区在墓地举办爱宴。</p>
+<p><strong>1601:</strong> 雷曼记录空前严寒，"狼群几欲入堂"。</p>
+<p><strong>1602:</strong> 初秋丰饶，圣坛前堆满麦穗与南瓜。</p>
+<p><strong>1603:</strong> 重新编排长凳，设铭牌固定座位。</p>
+<p><strong>1604:</strong> 一名还俗修士改宗路德宗，寓居教堂学校教授拉丁文。</p>
+<p><strong>1605:</strong> 时钟增添整点报时的机械小人。</p>
+<p><strong>1606:</strong> 雷曼赴法兰克福参与宗教辩论，与加尔文派舌战。</p>
+<p><strong>1607:</strong> 外墙重新粉刷白色石灰。</p>
+<p><strong>1608:</strong> 新教联盟成立，堂区数名子弟加入黑森军队。</p>
+<p><strong>1609:</strong> 于利希-克利夫斯继承危机，市郊弥漫不安。</p>
+<p><strong>1610:</strong> 法兰克福图书馆获赠大宗藏书，本堂借得抄本数部。</p>
+<p><strong>1611:</strong> 秋夜大彗星，人心惶惶，雷曼讲道安抚，称其为造物主之工。</p>
+<p><strong>1612:</strong> 法兰克福市民暴动，郊区未受波及。</p>
+<p><strong>1613:</strong> 全年行婚礼二十对，创堂区记录。</p>
+<p><strong>1614:</strong> 圣餐台四周加设木栏。</p>
+<p><strong>1615:</strong> 邻村一桩女巫控告兴起，雷曼应邀出具神学意见，终判无罪。</p>
+<p><strong>1616:</strong> 雷曼完成灵修手册《郊野之泉》，在法兰克福付梓。</p>
+<p><strong>1617:</strong> 纪念宗教改革百周年，教区发放纪念锡章。</p>
+<p><strong>1618:</strong> 三十年战争爆发，起初仅有远方消息传来。</p>
+<p><strong>1619:</strong> 波希米亚"冬王"腓特烈经过法兰克福，本堂未受重视。</p>
+<p><strong>1620:</strong> 市议会部署防御，规定教堂钟声兼作空袭警报。</p>
+<p><strong>1621:</strong> 物价腾贵，教会开设面包分发处。</p>
+<p><strong>1622:</strong> 曼斯菲尔德军队逼近，村民携家畜夜避教堂中殿。</p>
+<p><strong>1623:</strong> 教堂被征收存粮，银器转移到地窖埋藏。</p>
+<p><strong>1624:</strong> 夏季，为安全计，圣爵与烛台装箱藏于椴树根下。</p>
+<p><strong>1625:</strong> 瘟疫随军营蔓延，堂区亡57人，雷曼病重幸存。</p>
+<p><strong>1626:</strong> 长椅悉数撤出，教堂改为临时伤兵医院。</p>
+<p><strong>1627:</strong> 丹麦骑兵过境，强征牧师的马匹。</p>
+<p><strong>1628:</strong> 帝国军队驻扎，天主教特使要求归还教堂，未果。</p>
+<p><strong>1629:</strong> 归还教产敕令发布，本堂被迫移交天主教，雷曼遭驱逐。</p>
+<p><strong>1630:</strong> 天主教神父约翰·施密特上任，恢复拉丁弥撒，新教徒转入地下。</p>
+<p><strong>1631:</strong> 瑞典王古斯塔夫·阿道夫进占法兰克福，教堂重归路德宗，大钟重鸣。</p>
+<p><strong>1632:</strong> 瑞典部队需索供养，损失银盘两件。</p>
+<p><strong>1633:</strong> 雷曼复职，以清水与祷告再次洁净圣所。</p>
+<p><strong>1634:</strong> 讷德林根会战后帝国军队卷土重来，教堂再度易手。</p>
+<p><strong>1635:</strong> 瘟疫与饥荒交织，死亡百余，掘大型合葬墓，雷曼染疫辞世。</p>
+<p><strong>1636:</strong> 教堂关闭整年，无驻堂神职，仅余更夫看守。</p>
+<p><strong>1637:</strong> 一名天主教司铎到来，但信徒寥寥。</p>
+<p><strong>1638:</strong> 瑞典军短暂反攻，堂区陷入无序。</p>
+<p><strong>1639:</strong> 无人管理，墓园荒草没膝，狐狸筑穴。</p>
+<p><strong>1640:</strong> 帝国军队长期驻防，中殿改作哨所。</p>
+<p><strong>1641:</strong> 充当辎重仓库，旧管风琴彻底损毁。</p>
+<p><strong>1642:</strong> 法兰克福谈判期间偶有劫掠，塔楼用作瞭望台。</p>
+<p><strong>1643:</strong> 和谈传闻带来希望，路德宗信徒着手清理瓦砾。</p>
+<p><strong>1644:</strong> 马蒂亚斯·克劳斯牧师到任，在断壁间举行首次露天礼拜。</p>
+<p><strong>1645:</strong> 简朴重献圣堂，仅存一口小钟鸣响。</p>
+<p><strong>1646:</strong> 从废弃修道院搬来旧长椅凑用。</p>
+<p><strong>1647:</strong> 集资重建管风琴，但音管奇缺。</p>
+<p><strong>1648:</strong> 《威斯特伐利亚和约》签订，路德宗权利永获保障，举堂高唱《主是我坚固保障》。</p>
+<p><strong>1649:</strong> 民事登记恢复正常，年内补办九场婚礼。</p>`
+                },
+                'annal-1650-1699': {
+                    title: '1650年 — 1699年 教堂年鉴',
+                    content: `<p><strong>1650:</strong> 墓园立"和平石"，刻棕榈枝与十字架。</p>
+<p><strong>1651:</strong> 克劳斯牧师写道："复兴如老牛拖车，但主恩日新。"</p>
+<p><strong>1652:</strong> （<strong>蔷薇十字会</strong>记录始）数名自称"寻光异乡人"的学者获允在夜间使用地窖，从事默想。</p>
+<p><strong>1653:</strong> 更多外来者加入，谈论炼金术与帕拉塞尔苏斯学说。</p>
+<p><strong>1654:</strong> 这群人首次自称"蔷薇十字兄弟"，在地窖墙壁粉笔绘玫瑰与十字。</p>
+<p><strong>1655:</strong> 兄弟会请求长租地下室，捐赠一盏银制长明灯。</p>
+<p><strong>1656:</strong> 堂区长老会默许，因他们慷慨捐助修复彩窗。</p>
+<p><strong>1657:</strong> 多名兄弟会成员擅书法，义务协助抄写赞美诗集。</p>
+<p><strong>1658:</strong> 一名成员经劝告在此受洗，取教名克里斯蒂安·罗森，引起争议。</p>
+<p><strong>1659:</strong> 法兰克福宗教法庭传询克劳斯牧师，他辩称彼等只是虔诚平信徒。</p>
+<p><strong>1660:</strong> 村童窥见他们身披白袍举行夜仪，传言能点石成金。</p>
+<p><strong>1661:</strong> 牧师正式记录："地下室拱门刻有三处蔷薇十字标记。"</p>
+<p><strong>1662:</strong> 内部神学分歧导致一部人离开，余者称"真枝"。</p>
+<p><strong>1663:</strong> 他们赠予教会一册神秘抄本，封面书《化学联姻》，锁入箱中。</p>
+<p><strong>1664:</strong> 瘟疫再起，兄弟会拿出自制草药救助病患，声名转好。</p>
+<p><strong>1665:</strong> 黑死病高峰，堂区亡44人，兄弟会三人受感染倒下，葬于教堂墓。</p>
+<p><strong>1666:</strong> 法兰克福老城大火未波及本村，兄弟会宣称其集体祈祷与护符使然。</p>
+<p><strong>1667:</strong> 圣诞节，他们赞助一出象征智慧之路的神秘剧。</p>
+<p><strong>1668:</strong> 市政当局警告禁止非法集会，聚会延至深夜。</p>
+<p><strong>1669:</strong> 一位自称克里斯托弗·罗森克罗伊茨后裔的年轻人加入。</p>
+<p><strong>1670:</strong> 钟楼维修，兄弟会出资三分之一。</p>
+<p><strong>1671:</strong> 成员在塔顶安置天文观测器具，记录星辰轨迹。</p>
+<p><strong>1672:</strong> 法荷战争紧张，兄弟会文献被藏入讲道台夹层。</p>
+<p><strong>1673:</strong> 法军威胁，村民将牲畜赶入教堂中殿过夜。</p>
+<p><strong>1674:</strong> 据说兄弟会向士兵分发画有符文的纸片作为"护符"。</p>
+<p><strong>1675:</strong> 克劳斯安息，尤利乌斯·霍普夫牧师继任，对密会多有保留。</p>
+<p><strong>1676:</strong> 霍普夫下令禁止地下室集会，兄弟会移至村外空屋。</p>
+<p><strong>1677:</strong> 但堂区依然发现题为《沉默之书》的手抄本流传。</p>
+<p><strong>1678:</strong> 市议会重新调查蔷薇十字异端嫌疑，执事烧毁若干证据。</p>
+<p><strong>1679:</strong> 霍普夫最终妥协，允许每年三次、仅限十二人的夜间聚集。</p>
+<p><strong>1680:</strong> 彗星再现，兄弟会宣告此乃"大转折"预兆，劝人悔改。</p>
+<p><strong>1681:</strong> 风暴摧毁塔尖，兄弟会预言重建将为本地带来五十年福运。</p>
+<p><strong>1682:</strong> 他们资助新尖顶，并在风信鸡下藏入一枚刻有蔷薇十字的铜牌。</p>
+<p><strong>1683:</strong> 维也纳被围，法兰克福筹集援金，兄弟会捐出可观金银条。</p>
+<p><strong>1684:</strong> 一名犹太卡巴拉学者受邀与兄弟会成员在本堂图书馆对话。</p>
+<p><strong>1685:</strong> 胡格诺难民涌入，本堂辟法语礼拜时段，兄弟会协助安置织工。</p>
+<p><strong>1686:</strong> 兄弟会为难民子弟教授基础拉丁文与数学。</p>
+<p><strong>1687:</strong> 公开进行"嬗变演示"自称铅变银，旋被揭穿为掉包，声誉蒙尘。</p>
+<p><strong>1688:</strong> 部分成员离去，集会减少。</p>
+<p><strong>1689:</strong> 普法尔茨遭法军蹂躏，难民激增，兄弟会投入赈济。</p>
+<p><strong>1690:</strong> （<strong>蔷薇十字</strong>高潮将尽）最后一场大规模夜仪，邻村目睹教堂窗户射出奇异白光，持续数小时。</p>
+<p><strong>1691:</strong> 此后集会戛然而止，仅剩一名年老守护者寡居。</p>
+<p><strong>1692:</strong> 老人在圣诞夜亡故，留给教堂一橡木箱，满装符号书稿。</p>
+<p><strong>1693:</strong> 霍普夫牧师将箱子贴封条束之高阁。</p>
+<p><strong>1694:</strong> 教堂遭窃，箱子被撬，部分手稿追回，余者失踪。</p>
+<p><strong>1695:</strong> 为避嫌，霍普夫焚毁追回文稿中看似异端者，仅保留拉丁文许可函。</p>
+<p><strong>1696:</strong> 法兰克福颁令严禁一切秘密结社，本堂蔷薇十字记录就此终篇。</p>
+<p><strong>1697:</strong> 和约签订，教区静心整理战乱档案。</p>
+<p><strong>1698:</strong> 霍普夫病重，口述遗言称"玫瑰十字之种不会泯灭"。</p>
+<p><strong>1699:</strong> 世纪盘点，地窖发现古怪玻璃曲颈甑和灰烬，归入杂物间。</p>`
+                },
+                'annal-1700-1749': {
+                    title: '1700年 — 1749年 教堂年鉴',
+                    content: `<p><strong>1700:</strong> 新牧师约翰·雅各布·迈尔就职。</p>
+<p><strong>1701:</strong> 清理塔楼杂物时，发现一暗间，内有蔷薇十字会遗留的长桌与熔炉。</p>
+<p><strong>1702:</strong> 自称"金玫瑰十字"的新团体三人拜访迈尔，请求恢复灵性聚会。</p>
+<p><strong>1703:</strong> 迈尔允许有限度集会，条件为不得闭门、全程使用正统祷文。</p>
+<p><strong>1704:</strong> 他们的活动记录为"金链兄弟会"，研习雅各·波墨神智学。</p>
+<p><strong>1705:</strong> 一位贵族孀妇加入，赠予成套水晶炼金器皿。</p>
+<p><strong>1706:</strong> 他们制造一面所谓"灵视镜"献予教堂，后被迈尔移走。</p>
+<p><strong>1707:</strong> 迈尔写道："他们孜孜不倦追求非受造之光。"</p>
+<p><strong>1708:</strong> 蔷薇十字高阶成员冯·克尼普豪森在此成婚，诸多身份不明的显贵乘蒙面马车而至。</p>
+<p><strong>1709:</strong> 奇寒严冬，莱茵河冰封可行马车，兄弟会设热汤分发处。</p>
+<p><strong>1710:</strong> 兄弟会提供半数资金重建管风琴，要求在高音管雕刻一组神秘字符。</p>
+<p><strong>1711:</strong> 侦探奉市议会之命潜伏礼拜，回报"未见悖逆，但有隐语"。</p>
+<p><strong>1712:</strong> 迈尔因疏于监管遭停职问询，坚称兄弟会行事正当。</p>
+<p><strong>1713:</strong> 修缮时发现一道秘梯通向更古早的地下穹窟，满壁符号，疑为早期间密室。</p>
+<p><strong>1714:</strong> 市议会派员查封地下部分，驱逐所有兄弟会成员。</p>
+<p><strong>1715:</strong> 兄弟会完全撤离，传闻大部迁往黑森-卡塞尔。</p>
+<p><strong>1716:</strong> 教堂举行洁净礼，刮去部分神秘符号。</p>
+<p><strong>1717:</strong> 残余成员正式告别，据称并入了共济会某分支，本堂蔷薇十字活动终结。</p>
+<p><strong>1718:</strong> 迈尔牧师退休，致力于撰写《驱散隐秘结社始末》。</p>
+<p><strong>1719:</strong> 新牧师格奥尔格·亨利希·韦伯到任，教风严正。</p>
+<p><strong>1720:</strong> 大修中彻底移除蔷薇十字遗迹，唯管风琴音管字符因深藏未动。</p>
+<p><strong>1721:</strong> 人痘接种争论传入，堂区持保守立场。</p>
+<p><strong>1722:</strong> 安装巴洛克式主祭坛画《基督升天》。</p>
+<p><strong>1723:</strong> 韦伯着手编写堂区新志。</p>
+<p><strong>1724:</strong> 丰收之年，墓园第四次扩建。</p>
+<p><strong>1725:</strong> 大钟"克里斯托弗"开裂，重铸后音色愈洪。</p>
+<p><strong>1726:</strong> 韦伯在书展购得大批启蒙哲学著作，置图书馆。</p>
+<p><strong>1727:</strong> 塔钟升级为更精密的擒纵机构。</p>
+<p><strong>1728:</strong> 牧师欣慰地记录："已无任何秘密集会迹象。"</p>
+<p><strong>1729:</strong> 虔敬主义传道人来访，引发深切的认罪奋兴。</p>
+<p><strong>1730:</strong> 韦伯与虔敬派发生冲突，禁止礼拜中大声哀哭。</p>
+<p><strong>1731:</strong> 设立正规穷人基金，按季度分发。</p>
+<p><strong>1732:</strong> 萨尔茨堡被逐新教徒途径法兰克福，本堂接待30余人。</p>
+<p><strong>1733:</strong> 天花板渗雨，木梁加固并覆铜皮。</p>
+<p><strong>1734:</strong> 波兰王位继承战未直接波及，但物价上涨。</p>
+<p><strong>1735:</strong> 韦伯出版两卷讲道集《郊野甘露》。</p>
+<p><strong>1736:</strong> 有人欲在广场演示风筝引电实验，信徒以其招致天谴加以阻止。</p>
+<p><strong>1737:</strong> 韦伯安息，其子约翰·马丁·韦伯继任，酷爱音乐。</p>
+<p><strong>1738:</strong> 组成堂区小型乐团，含弦乐与定音鼓。</p>
+<p><strong>1739:</strong> 唱诗班扩充至40人，声誉渐起。</p>
+<p><strong>1740:</strong> 腓特烈大帝即位，普鲁士光芒初现，法兰克福仍为自由市。</p>
+<p><strong>1741:</strong> 奥地利王位继承战争，法军逼近，教堂再次掩藏公物。</p>
+<p><strong>1742:</strong> 法军纪律尚可，过境无大损，感恩礼拜举行。</p>
+<p><strong>1743:</strong> 聘请符腾堡巧匠修理管风琴。</p>
+<p><strong>1744:</strong> 管风琴竣工，增置混响音栓，村外可闻。</p>
+<p><strong>1745:</strong> 尖顶加装富兰克林式避雷针，为其时德意志最早之一。</p>
+<p><strong>1746:</strong> 小韦伯牧师在塔楼近处遭雷击却幸存，归功避雷针，反对声遂息。</p>
+<p><strong>1747:</strong> 南侧翼扩建，用作主日学教室。</p>
+<p><strong>1748:</strong> 亚琛和约缔结，恢复和平。</p>
+<p><strong>1749:</strong> 歌德生于法兰克福，据后世追忆，他少年时曾散步至本堂。</p>`
+                },
+                'annal-1750-1799': {
+                    title: '1750年 — 1799年 教堂年鉴',
+                    content: `<p><strong>1750:</strong> 世纪中叶，教堂外观呈简洁巴洛克风貌。</p>
+<p><strong>1751:</strong> 管风琴台前设新雕花围栏。</p>
+<p><strong>1752:</strong> 诗人克洛普施托克访法兰克福，未至本堂，然村中识者诵其诗篇。</p>
+<p><strong>1753:</strong> 首次人口统计：堂区计350人。</p>
+<p><strong>1754:</strong> 英法美洲战事起，黑森佣兵征召，数名青年自此去国。</p>
+<p><strong>1755:</strong> 里斯本大地震，教堂举行特别代祷。</p>
+<p><strong>1756:</strong> 七年战争爆发，谷物再度腾贵。</p>
+<p><strong>1757:</strong> 法兰克福被法军占领，本堂用作野战医院。</p>
+<p><strong>1758:</strong> 占领期间正常礼拜大减，多在地下室举行。</p>
+<p><strong>1759:</strong> 法军撤离，堂区清洁并重新祝圣，部分祭坛布遗失。</p>
+<p><strong>1760:</strong> 重铸圣餐银杯，样式古朴。</p>
+<p><strong>1761:</strong> 小韦伯推行乡村教育，主张男女皆学。</p>
+<p><strong>1762:</strong> 教堂附设女子走读学校开班。</p>
+<p><strong>1763:</strong> 七年战争终，欢庆和平，晚间燃灯。</p>
+<p><strong>1764:</strong> 莫扎特在法兰克福演奏，村中有乐师步行进城聆听。</p>
+<p><strong>1765:</strong> 墓园入口立锻铁十字架，饰以葡萄纹样。</p>
+<p><strong>1766:</strong> 为乡绅家庭增设两侧包厢。</p>
+<p><strong>1767:</strong> 管风琴师汉斯·齐默尔曼创作前奏曲《克里斯托弗，引我渡河》。</p>
+<p><strong>1768:</strong> 夏季欠收，教堂煮土豆赈济。</p>
+<p><strong>1769:</strong> 帝国颁布新教宽容法令，气氛宽松。</p>
+<p><strong>1770:</strong> 一位英国卫斯理宗传道人借堂证道，热烈风格引来议论。</p>
+<p><strong>1771:</strong> 饥荒再临，磨坊主弗里茨捐面粉十袋。</p>
+<p><strong>1772:</strong> 小韦伯记："民虽贫乏，信靠弥坚。"</p>
+<p><strong>1773:</strong> 耶稣会被解散的消息传来，本地仅作记录。</p>
+<p><strong>1774:</strong> 《少年维特之烦恼》出版，青年争读。</p>
+<p><strong>1775:</strong> 美洲独立战争讯息抵达，部分村民向往自由。</p>
+<p><strong>1776:</strong> 7月某礼拜日，小韦伯以钟声遥祝美利坚独立宣言。</p>
+<p><strong>1777:</strong> 约翰·马丁·韦伯去世，菲利普·恩斯特·瓦格纳就任。</p>
+<p><strong>1778:</strong> 瓦格纳受启蒙思想影响，简化若干古老仪节。</p>
+<p><strong>1779:</strong> 首次在礼拜中使用大字赞美诗展示板。</p>
+<p><strong>1780:</strong> 严冬再临，莱茵河结厚冰，办冰上集市。</p>
+<p><strong>1781:</strong> 康德《纯粹理性批判》出版，牧师与教员夜间研读。</p>
+<p><strong>1782:</strong> 瓦格纳提倡接种牛痘，村民疑虑，应者无几。</p>
+<p><strong>1783:</strong> 拉基火山喷发致天空异色，村民恐慌，牧师以自然哲学解释。</p>
+<p><strong>1784:</strong> 教堂增设屋顶通风窗。</p>
+<p><strong>1785:</strong> 法兰克福书展日趋繁盛，本堂承印部分表格，获得收入。</p>
+<p><strong>1786:</strong> 腓特烈大帝去世，教堂举行追悼。</p>
+<p><strong>1787:</strong> 瓦格纳写道："理性之光照耀，古之蔷薇十字传奇仅余故事。"</p>
+<p><strong>1788:</strong> 拆旧宅建新牧师楼时，挖出蔷薇十字会遗留的珐琅徽章一枚。</p>
+<p><strong>1789:</strong> 法国大革命爆发，消息煽动少数青年，教堂呼吁冷静。</p>
+<p><strong>1790:</strong> 举行"公民祈祷"，祈求公义秩序。</p>
+<p><strong>1791:</strong> 法国流亡贵族数家经此，获得短暂庇护。</p>
+<p><strong>1792:</strong> 法兰克福被革命法军占领，教堂被征作马厩。</p>
+<p><strong>1793:</strong> 圣克里斯托弗木雕像遭激进士兵焚毁，抗议无果。</p>
+<p><strong>1794:</strong> 旧政权恢复，教堂重新祝圣。</p>
+<p><strong>1795:</strong> 瓦格纳被迫书面悔过，承认曾"过于倾向启蒙"。</p>
+<p><strong>1796:</strong> 法军炮击法兰克福，本堂幸运未被击中。</p>
+<p><strong>1797:</strong> 莱茵左岸被割让，流徙感伤蔓延。</p>
+<p><strong>1798:</strong> 教堂开设产业学校，教习纺织与木工。</p>
+<p><strong>1799:</strong> 瓦格纳总结动荡世纪，将年鉴完好交予执事。</p>`
+                },
+                'annal-1800-1849': {
+                    title: '1800年 — 1849年 教堂年鉴',
+                    content: `<p><strong>1800:</strong> 世纪初年，受洗人数为数十年最低。</p>
+<p><strong>1801:</strong> 吕内维尔和约，自由市领地缩减。</p>
+<p><strong>1802:</strong> 教堂所属的部分田地因世俗化运动被没收。</p>
+<p><strong>1803:</strong> 帝国代表会议后，法兰克福前景未卜。</p>
+<p><strong>1804:</strong> 拿破仑称帝，不久成立法兰克福大公国。</p>
+<p><strong>1805:</strong> 奥斯特里茨战役，暂得和平。</p>
+<p><strong>1806:</strong> 法兰克福并入莱茵联邦，神圣罗马帝国终结，堂区为新祖国祈祷。</p>
+<p><strong>1807:</strong> 拿破仑法典引入，婚姻登记转交民事，教堂不再掌握。</p>
+<p><strong>1808:</strong> 战争税繁重，不得不出售部分银器。</p>
+<p><strong>1809:</strong> 瓦格纳因讲道中影射暴政被当局警告。</p>
+<p><strong>1810:</strong> 法方欲征用大钟铸炮，村民连夜拆下藏于干草棚。</p>
+<p><strong>1811:</strong> 彗星再现，传为拿破仑征俄之兆，代祷勤行。</p>
+<p><strong>1812:</strong> 法军自俄国败退，伤兵源源经过，堂区尽力救护。</p>
+<p><strong>1813:</strong> 莱比锡战役后，联军收复法兰克福，英俄士兵在堂内举行感恩礼拜。</p>
+<p><strong>1814:</strong> 维也纳会议，法兰克福恢复自由市。</p>
+<p><strong>1815:</strong> 瓦格纳退休，克里斯蒂安·弗里德里希·申克接任。</p>
+<p><strong>1816:</strong> 坦博拉火山导致无夏之年，饥馑严重，教堂全力救济。</p>
+<p><strong>1817:</strong> 宗教改革三百周年，与本地归正宗联合礼拜，探讨合一。</p>
+<p><strong>1818:</strong> 法兰克福新宪法颁布，堂区代表列席议会开幕礼。</p>
+<p><strong>1819:</strong> 卡尔斯巴德法令带来审查，讲道愈发谨慎。</p>
+<p><strong>1820:</strong> 圣堂内首次安装铸铁暖炉。</p>
+<p><strong>1821:</strong> 申克创办堂区图书馆，藏书逾300册。</p>
+<p><strong>1822:</strong> 塔尖改建成当时盛行的新哥特式。</p>
+<p><strong>1823:</strong> 成立堂区混声合唱协会。</p>
+<p><strong>1824:</strong> 贝多芬第九交响曲首演消息传来，音乐之夜诵读席勒颂诗。</p>
+<p><strong>1825:</strong> 歌德纪念活动在此举行，咏唱其诗歌所谱赞美诗。</p>
+<p><strong>1826:</strong> 新管风琴建成，倾向浪漫派音色。</p>
+<p><strong>1827:</strong> 扩建墓园时掘出罗马时期钱币与陶罐，文物上交。</p>
+<p><strong>1828:</strong> 开办教堂幼稚园，为全村首间。</p>
+<p><strong>1829:</strong> 申克记录："工厂渐多，工人阶层形成。"</p>
+<p><strong>1830:</strong> 法国七月革命鼓舞自由运动，但本地平稳。</p>
+<p><strong>1831:</strong> 霍乱流行，法兰克福设防，堂区持续代祷。</p>
+<p><strong>1832:</strong> 汉巴赫庆典，民主与统一呼声高涨。</p>
+<p><strong>1833:</strong> 法兰克福冲击警备队事件，本堂未参与。</p>
+<p><strong>1834:</strong> 德意志关税同盟，经济初现改善。</p>
+<p><strong>1835:</strong> 首条铁路通车至法兰克福，钟声伴火车汽笛。</p>
+<p><strong>1836:</strong> 教堂引入煤气灯照明。</p>
+<p><strong>1837:</strong> 申克逝世，路德维希·卡尔·布卢姆继位。</p>
+<p><strong>1838:</strong> 布卢姆热衷海外传教，成立差会小组。</p>
+<p><strong>1839:</strong> 首次差派一对夫妇前往南非纳塔尔。</p>
+<p><strong>1840:</strong> 普鲁士新王即位，升起统一期盼。</p>
+<p><strong>1841:</strong> 堂区音乐节上演亨德尔《弥赛亚》选段。</p>
+<p><strong>1842:</strong> 受科隆大教堂重建激励，计划本堂新哥特式化。</p>
+<p><strong>1843:</strong> 彩绘玻璃换新，主题为圣克里斯托弗背负圣婴。</p>
+<p><strong>1844:</strong> 西里西亚织工起义，本堂织工深表同情。</p>
+<p><strong>1845:</strong> 马铃薯晚疫病成灾，施粥规模加倍。</p>
+<p><strong>1846:</strong> 饥荒，教会成立汤厨房，日供百人。</p>
+<p><strong>1847:</strong> 危机又至，开设小额储蓄互助社。</p>
+<p><strong>1848:</strong> 三月革命，法兰克福国民议会召开，布卢姆作为郊区代表出席开幕式礼拜。</p>
+<p><strong>1849:</strong> 革命受挫，布卢姆哀叹，但继续安抚教众。</p>`
+                },
+                'annal-1850-1899': {
+                    title: '1850年 — 1899年 教堂年鉴',
+                    content: `<p><strong>1850:</strong> 普鲁士主导宪法，恢复德意志邦联。</p>
+<p><strong>1851:</strong> 为和平铸新钟，铭文"荣耀归上帝"。</p>
+<p><strong>1852:</strong> 布卢姆写小册《自由与信仰的秩序》。</p>
+<p><strong>1853:</strong> 法兰克福起义期间，教堂短暂充当前哨指挥所。</p>
+<p><strong>1854:</strong> 教会提供场地成立工人教育协会。</p>
+<p><strong>1855:</strong> 钟楼机芯更新，走时更准。</p>
+<p><strong>1856:</strong> 关税同盟进一步繁荣，郊区日渐扩展。</p>
+<p><strong>1857:</strong> 旧墓地关闭，启用村外新墓地。</p>
+<p><strong>1858:</strong> 新建二层附属学校楼。</p>
+<p><strong>1859:</strong> 意大利战争，法兰克福维持中立。</p>
+<p><strong>1860:</strong> 堂区人口统计达801人。</p>
+<p><strong>1861:</strong> 威廉一世登基，民族希望寄托于普鲁士。</p>
+<p><strong>1862:</strong> 俾斯麦任首相，布卢姆对其强硬手段表示忧虑。</p>
+<p><strong>1863:</strong> 法兰克福特会议，改革邦联未果。</p>
+<p><strong>1864:</strong> 普丹战争，本堂数名青年在黑森军队服役。</p>
+<p><strong>1865:</strong> 教堂开始统一使用新编德语赞美诗集。</p>
+<p><strong>1866:</strong> 神父赫尔.贝茨在教堂中意外死亡，教堂重建。普奥战争，法兰克福被普鲁士占领，自由市终结，本堂划入黑森-拿骚省。布卢姆因反对吞并被短暂拘留。</p>
+<p><strong>1867:</strong> 教堂依法成为普鲁士联合教会的一员。</p>
+<p><strong>1868:</strong> 布卢姆辞职，阿道夫·施蒂勒牧师继任。</p>
+<p><strong>1869:</strong> 为适应增长，扩建耳堂。</p>
+<p><strong>1870:</strong> 普法战争爆发，堂区青年从军，每日鸣钟代祷。</p>
+<p><strong>1871:</strong> 德意志帝国成立，钟声与感恩礼拜响彻昼夜。</p>
+<p><strong>1872:</strong> 文化斗争影响教会，施蒂勒温和抵制对教会的过度限制。</p>
+<p><strong>1873:</strong> 五月法令使堂区学校受国家检查。</p>
+<p><strong>1874:</strong> 教区开办小型护士站。</p>
+<p><strong>1875:</strong> 民事婚姻强制，教堂婚礼一度寥落。</p>
+<p><strong>1876:</strong> 塔顶重改为更陡峭的尖盔顶。</p>
+<p><strong>1877:</strong> 供暖系统改成低压蒸汽。</p>
+<p><strong>1878:</strong> 《反社会党人法》颁布，教堂表态中立。</p>
+<p><strong>1879:</strong> 成立青年团契，每周末聚会。</p>
+<p><strong>1880:</strong> 尝试引入电力照明，安放试验性弧光灯。</p>
+<p><strong>1881:</strong> 正式通电，为本地区最早拥有电灯的教堂之一。</p>
+<p><strong>1882:</strong> 天花与白喉并发，施蒂勒亲自看护患者。</p>
+<p><strong>1883:</strong> 路德诞辰四百周年，举办盛大纪念。</p>
+<p><strong>1884:</strong> 全新电力鼓风管风琴落成。</p>
+<p><strong>1885:</strong> 福音工人协会在堂区成立支部。</p>
+<p><strong>1886:</strong> 首辆汽车在法兰克福出现，村民惊奇不已。</p>
+<p><strong>1887:</strong> 施蒂勒安息，威廉·特劳布牧师继任。</p>
+<p><strong>1888:</strong> 三帝之年，两次敲响丧钟。</p>
+<p><strong>1889:</strong> 彩窗由法兰克福名家重新设计。</p>
+<p><strong>1890:</strong> 俾斯麦去职，社会政策趋缓。</p>
+<p><strong>1891:</strong> 教堂开设日间托儿所。</p>
+<p><strong>1892:</strong> 汉堡霍乱，法兰克福高度警觉，本地幸免。</p>
+<p><strong>1893:</strong> 得到新圣经祭坛一部，精装路德译本。</p>
+<p><strong>1894:</strong> 建立教堂档案馆，全面整理本鉴。</p>
+<p><strong>1895:</strong> 恩格斯逝世，村中少数工人悼念。</p>
+<p><strong>1896:</strong> 一位克罗地亚主教来访，交流教会艺术。</p>
+<p><strong>1897:</strong> 施特劳斯诞辰纪念，演奏其宗教音乐。</p>
+<p><strong>1898:</strong> 外墙砂岩风化，实施全面翻新。</p>
+<p><strong>1899:</strong> 世纪末礼拜，信众满堂迎接新世纪。</p>`
+                },
+                'annal-1900-1949': {
+                    title: '1900年 — 1949年 教堂年鉴',
+                    content: `<p><strong>1900:</strong> 新世纪钟声，特劳布祝祷。</p>
+<p><strong>1901:</strong> 特劳布退休，卡尔·齐格勒牧师继任。</p>
+<p><strong>1902:</strong> 堂区储蓄银行开业。</p>
+<p><strong>1903:</strong> 电车轨道铺至村口，方便进城。</p>
+<p><strong>1904:</strong> 牧师楼安装电话。</p>
+<p><strong>1905:</strong> 俄国革命消息传来，收留几名流亡者。</p>
+<p><strong>1906:</strong> 旧管风琴最终拆解，换为当时顶尖的浪漫派巨琴。</p>
+<p><strong>1907:</strong> 唱诗班首次出访，赴英国伯明翰交流。</p>
+<p><strong>1908:</strong> 主日学转为儿童崇拜，更重参与。</p>
+<p><strong>1909:</strong> 齐格勒大力推动青年查经班。</p>
+<p><strong>1910:</strong> 信徒总数已达1500人。</p>
+<p><strong>1911:</strong> 齐柏林飞艇掠过教堂上空，万众仰首。</p>
+<p><strong>1912:</strong> 泰坦尼克沉没，为遇难者鸣钟。</p>
+<p><strong>1913:</strong> 威廉二世访问法兰克福，未临本堂，村童列队遥望。</p>
+<p><strong>1914:</strong> 一战爆发，钟声送别首批入伍青年。齐格勒率众祈求和平。</p>
+<p><strong>1915:</strong> 食物短缺，教堂后院开垦菜地，设汤站。</p>
+<p><strong>1916:</strong> 阵亡通知渐多，举行数次悲痛的追思礼拜。</p>
+<p><strong>1917:</strong> 美国参战，前景阴郁，呼吁忍耐。</p>
+<p><strong>1918:</strong> 德国革命，皇帝退位，教堂为祖国的安宁举行代祷会。</p>
+<p><strong>1919:</strong> 凡尔赛条约，法兰克福部分地区被法军占领，本村恰在界外。</p>
+<p><strong>1920:</strong> 法军撤离，但恶性通胀萌芽。</p>
+<p><strong>1921:</strong> 成立教会援助协会，接济最贫。</p>
+<p><strong>1922:</strong> 马克崩溃，奉献以鸡蛋和面粉代替。</p>
+<p><strong>1923:</strong> 鲁尔被占，法兰克福动荡，希特勒政变未遂消息传来。</p>
+<p><strong>1924:</strong> 道威斯计划，经济企稳。</p>
+<p><strong>1925:</strong> 齐格勒退休，海因里希·布劳恩牧师就任。</p>
+<p><strong>1926:</strong> 德国加入国联，和平憧憬再起。</p>
+<p><strong>1927:</strong> 装置无线电接收器，转播主日礼拜。</p>
+<p><strong>1928:</strong> 管风琴彻底检修，复原巴洛克音栓。</p>
+<p><strong>1929:</strong> 华尔街崩盘，大萧条开始，教会扩大救济。</p>
+<p><strong>1930:</strong> 纳粹党在本地选举中异军突起，布劳恩发声警告。</p>
+<p><strong>1931:</strong> 失业如潮，教堂组织以工代赈的木材劳动队。</p>
+<p><strong>1932:</strong> 政治极化严重，布劳恩呼吁合一与清醒。</p>
+<p><strong>1933:</strong> 希特勒掌权，布劳恩加入认信教会，抵抗德意志基督徒。</p>
+<p><strong>1934:</strong> 巴门宣言发布，本堂在认信教会旗帜下。</p>
+<p><strong>1935:</strong> 纽伦堡种族法，布劳恩与数名信徒秘密援助犹太邻居。</p>
+<p><strong>1936:</strong> 柏林奥运会，堂区关注，但保持距离。</p>
+<p><strong>1937:</strong> 盖世太保开始监视布劳恩的讲道。</p>
+<p><strong>1938:</strong> 水晶之夜，教堂地下掩护两名犹太人躲过抓捕。</p>
+<p><strong>1939:</strong> 二战爆发，再次响起征召的钟声。</p>
+<p><strong>1940:</strong> 法兰克福遭受空袭，本堂奇迹般未中弹。</p>
+<p><strong>1941:</strong> 布劳恩被捕，押往集中营，一名退休老牧师暂代。</p>
+<p><strong>1942:</strong> 大钟被拆走熔作军火，塔楼静默。</p>
+<p><strong>1943:</strong> 大规模轰炸开始，教堂中殿局部受损。</p>
+<p><strong>1944:</strong> 法兰克福大空袭，教堂中弹起火，中殿与屋顶坍塌，唯塔楼屹立。珍贵档案因提前转移而幸存。</p>
+<p><strong>1945:</strong> 3月美军占领，布劳恩幸存归来，在废墟中带领首次露天礼拜。</p>
+<p><strong>1946:</strong> 清理碎砖，于旧地基旁搭起木结构应急教堂。</p>
+<p><strong>1947:</strong> 饥饿严冬，教会分发联合国善后救济物资。</p>
+<p><strong>1948:</strong> 货币改革，经济起步，重建计划酝酿。</p>
+<p><strong>1949:</strong> 联邦德国成立，在废墟边隆重奠基新堂。</p>`
+                },
+                'annal-1950-1999': {
+                    title: '1950年 — 1999年 教堂年鉴',
+                    content: `<p><strong>1950:</strong> 新中殿竣工，现代风格，保留旧塔。</p>
+<p><strong>1951:</strong> 布劳恩退休，弗里茨·曼特牧师继任。</p>
+<p><strong>1952:</strong> 新铸四口铜钟，纪念被熔化的旧钟。</p>
+<p><strong>1953:</strong> 全新管风琴献堂，音管三千。</p>
+<p><strong>1954:</strong> 伯尔尼世界杯奇迹，村中一片欢腾，敲钟庆祝。</p>
+<p><strong>1955:</strong> 郊区大规模建房，教区人口激增。</p>
+<p><strong>1956:</strong> 新抽象风格彩窗揭幕，主题为"光"。</p>
+<p><strong>1957:</strong> 罗马条约，曼特支持欧洲和解。</p>
+<p><strong>1958:</strong> 信徒达3000人，决定植堂。</p>
+<p><strong>1959:</strong> 分堂圣马可教堂成立，本堂减轻压力。</p>
+<p><strong>1960:</strong> 曼特退休，格哈德·韦伯牧师继位。</p>
+<p><strong>1961:</strong> 柏林墙筑起，震惊，祈祷会日日举行。</p>
+<p><strong>1962:</strong> 第二次梵蒂冈公会议，与本地天主教关系缓和。</p>
+<p><strong>1963:</strong> 肯尼迪访法兰克福，青年轰动。</p>
+<p><strong>1964:</strong> 教堂新建青年中心，设乒乓球与图书角。</p>
+<p><strong>1965:</strong> 与以色列建交，韦伯推动犹太-基督教对话。</p>
+<p><strong>1966:</strong> 妇女按立争论初现，本堂仍持保留。</p>
+<p><strong>1967:</strong> 学生运动澎湃，青年团契激烈讨论社会公义。</p>
+<p><strong>1968:</strong> 教会内兴起民主化呼声，长老会改组。</p>
+<p><strong>1969:</strong> 引入节奏更明快的新赞美诗。</p>
+<p><strong>1970:</strong> 教会社会服务站正式成立。</p>
+<p><strong>1971:</strong> 堂区季刊《河边钟声》创刊。</p>
+<p><strong>1972:</strong> 慕尼黑奥运人质惨案，联合哀悼礼拜。</p>
+<p><strong>1973:</strong> 石油危机，教堂照明节能，减少夜聚。</p>
+<p><strong>1974:</strong> 韦伯退休，克劳斯·彼得森牧师接替。</p>
+<p><strong>1975:</strong> 首位女性长老经选举进入堂务会。</p>
+<p><strong>1976:</strong> 教堂建筑群列入黑森州古迹名录。</p>
+<p><strong>1977:</strong> 德国之秋，恐怖事件频发，祈祷安宁。</p>
+<p><strong>1978:</strong> 与英国考文垂座堂结为姊妹教会。</p>
+<p><strong>1979:</strong> 彼得森撰写《圣克里斯托弗教堂全史》，整合本鉴内容。</p>
+<p><strong>1980:</strong> 整修塔楼时，在风信鸡下发现17世纪蔷薇十字会藏匿的铜制刻印盒。</p>
+<p><strong>1981:</strong> 刻印盒公开展出，引来欧洲多国学者探访。</p>
+<p><strong>1982:</strong> 更换新风信鸡，旧的连同蔷薇十字铜牌收入博物馆展柜。</p>
+<p><strong>1983:</strong> 路德诞辰五百周年，全德瞩目，堂区举行为期一周的活动。</p>
+<p><strong>1984:</strong> 安装由42口小钟组成的钟琴。</p>
+<p><strong>1985:</strong> 考古式清理地下穹窟，发掘出疑似炼金坩埚残片。</p>
+<p><strong>1986:</strong> 切尔诺贝利核灾，举行忏悔与代祷。</p>
+<p><strong>1987:</strong> 法兰克福机场抗议，环境议题进入教会。</p>
+<p><strong>1988:</strong> 堂区聚舍扩建多功能厅。</p>
+<p><strong>1989:</strong> 柏林墙倒塌，通宵感恩礼拜，满座泪泣。</p>
+<p><strong>1990:</strong> 两德统一，10月3日钟鸣不绝。</p>
+<p><strong>1991:</strong> 海湾战争，祈求公义和平。</p>
+<p><strong>1992:</strong> 马斯特里赫特条约，为欧洲合一祷告。</p>
+<p><strong>1993:</strong> 中殿内部彻底整修，恢复部分历史痕迹。</p>
+<p><strong>1994:</strong> 彼得森退休，玛格丽特·施密特为首位女牧师。</p>
+<p><strong>1995:</strong> 为前南斯拉夫难民设教会避难公寓。</p>
+<p><strong>1996:</strong> 堂区建立首个互联网主页，年检上网。</p>
+<p><strong>1997:</strong> 首次"蔷薇十字会与基督教神秘主义"学术研讨会在此举行。</p>
+<p><strong>1998:</strong> 屋顶安装太阳能光电板。</p>
+<p><strong>1999:</strong> 世纪末预备，钟声再度为千年交替而鸣。</p>`
+                }
+            };
+
+            const data = annalData[annalId];
+            if (!data) {
+                return '<button class="back-btn" onclick="backToSearch()">← 返回数字藏书</button><p>数据加载失败</p>';
+            }
+            return `
+            <button class="back-btn" onclick="backToSearch()">← 返回数字藏书</button>
+            <div class="detail-section">
+              <h2>${data.title}</h2>
+              ${data.content}
+            </div>`;
+        }
+
+        document.getElementById('homePage').style.display = 'block';
+        document.getElementById('digitalLibraryPage').style.display = 'none';
+        navHome.classList.add('active-link');
+    </script>
+</body>
+</html>
